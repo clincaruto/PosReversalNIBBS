@@ -1,8 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using PosReversalNIBBS_API.Models.Domain;
 using PosReversalNIBBS_API.Models.DTO;
 using PosReversalNIBBS_API.Repositories.IRepository;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
 
 namespace PosReversalNIBBS_API.Controllers
 {
@@ -12,6 +19,7 @@ namespace PosReversalNIBBS_API.Controllers
 	{
 		private readonly IExcelResponseRepository excelResponseRepository;
 		private readonly IMapper mapper;
+
 
 		public ExcelResponseController(IExcelResponseRepository excelResponseRepository, IMapper mapper)
 		{
@@ -44,7 +52,85 @@ namespace PosReversalNIBBS_API.Controllers
 			return Ok(excelResDTO);
 		}
 
-		[HttpPost]
+        [HttpPost]
+        [Route("file-upload")]
+        public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
+        {
+            long size = files.Sum(f => f.Length);
+          
+          
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+
+                {
+					var filePath  = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+                    if (!Directory.Exists(filePath))
+					{
+                        Directory.CreateDirectory(filePath);
+                    }
+                    using (var fileStream = new FileStream(Path.Combine(filePath, formFile.FileName), FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(fileStream);
+                        return Ok(ReadExcel(fileStream));
+                    }
+                }
+            }
+
+            // Process uploaded files
+            // Don't rely on or trust the FileName property without validation.
+
+            return Ok(new { count = files.Count, size });
+        }
+
+
+        string ReadExcel(Stream stream)
+        {
+            DataTable dtTable = new DataTable();
+            List<string> rowList = new List<string>();
+            ISheet sheet;
+			using (stream)
+
+			{
+				stream.Position = 0;
+				XSSFWorkbook xssWorkbook = new XSSFWorkbook(stream);
+				sheet = xssWorkbook.GetSheetAt(0);
+				IRow headerRow = sheet.GetRow(0);
+				int cellCount = headerRow.LastCellNum;
+				for (int j = 0; j < cellCount; j++)
+				{
+					ICell cell = headerRow.GetCell(j);
+					if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
+					{
+						dtTable.Columns.Add(cell.ToString());
+					}
+				}
+				for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+				{
+					IRow row = sheet.GetRow(i);
+					if (row == null) continue;
+					if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
+					for (int j = row.FirstCellNum; j < cellCount; j++)
+					{
+						if (row.GetCell(j) != null)
+						{
+							if (!string.IsNullOrEmpty(row.GetCell(j).ToString()) && !string.IsNullOrWhiteSpace(row.GetCell(j).ToString()))
+							{
+								rowList.Add(row.GetCell(j).ToString());
+							}
+						}
+					}
+					if (rowList.Count > 0)
+						dtTable.Rows.Add(rowList.ToArray());
+					rowList.Clear();
+				}
+			}
+            return JsonConvert.SerializeObject(dtTable);
+        }
+
+
+
+        [HttpPost]
 		public async Task<IActionResult> AddExcelAsync(AddExcelResponseVM addExcelResponseVM)
 		{
 			// conver excelDto to domain model

@@ -62,7 +62,7 @@ namespace PosReversalNIBBS_API.Configurations.Implementation
             finally
             { 
                 connection.Close();
-                Console.WriteLine("All records are updated with account Id")
+                Console.WriteLine("All records are updated with account Id");
             }
 
            // return new List<ExcelResponse>();
