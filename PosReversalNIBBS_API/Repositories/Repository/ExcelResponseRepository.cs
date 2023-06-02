@@ -51,20 +51,15 @@ namespace PosReversalNIBBS_API.Repositories.Repository
 			if (existingExcelResponse != null)
 			{
 				// I do not want to update the id, but want to update other properties
-				existingExcelResponse.IssuingBankName = excelResponse.IssuingBankName;
-				existingExcelResponse.Merchant_Id = excelResponse.Merchant_Id;
-				existingExcelResponse.Original_Data_Element = excelResponse.Original_Data_Element;	
-				existingExcelResponse.Retrieval_Ref_Number = existingExcelResponse.Retrieval_Ref_Number;
-				existingExcelResponse.System_Trace_Number = existingExcelResponse.System_Trace_Number;
-				existingExcelResponse.Processor_Name = excelResponse.Processor_Name;
-				existingExcelResponse.Amount = excelResponse.Amount;
-				existingExcelResponse.Terminal_Id = excelResponse.Terminal_Id;
-				existingExcelResponse.Bin = excelResponse.Bin;
-				existingExcelResponse.Pan = excelResponse.Pan;
-				existingExcelResponse.Processing_Code = excelResponse.Processing_Code;
-				existingExcelResponse.Response_code = excelResponse.Response_code;
-				existingExcelResponse.Transaction_Date = excelResponse.Transaction_Date;
-				existingExcelResponse.Account_Id = excelResponse.Account_Id;
+				existingExcelResponse.TERMINAL_ID = excelResponse.TERMINAL_ID;
+				existingExcelResponse.MERCHANT_ID = excelResponse.MERCHANT_ID;
+				existingExcelResponse.AMOUNT = excelResponse.AMOUNT;
+				existingExcelResponse.STAN = excelResponse.STAN;
+				existingExcelResponse.RRN = excelResponse.RRN;
+				existingExcelResponse.PAN = excelResponse.PAN;
+				existingExcelResponse.TRANSACTION_DATE = excelResponse.TRANSACTION_DATE;
+				existingExcelResponse.PROCESSOR = excelResponse.PROCESSOR;
+				existingExcelResponse.ACCOUNT_ID = excelResponse.ACCOUNT_ID;
 
 				await context.SaveChangesAsync();
 				return existingExcelResponse;

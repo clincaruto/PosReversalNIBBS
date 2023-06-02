@@ -7,7 +7,7 @@ namespace PosReversalNIBBS_API.Validators
     {
         public AddExcelResponseValidator()
         {
-            RuleFor(x => x.IssuingBankName).NotEmpty().WithMessage("This field is required");
+            RuleFor(x => x.TERMINAL_ID).NotEmpty().WithMessage("This field is required");
         }
     }
 }

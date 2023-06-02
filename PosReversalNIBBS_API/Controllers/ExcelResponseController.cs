@@ -10,6 +10,7 @@ using PosReversalNIBBS_API.Repositories.IRepository;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text.Json;
 
 namespace PosReversalNIBBS_API.Controllers
 {
@@ -70,9 +71,25 @@ namespace PosReversalNIBBS_API.Controllers
                         Directory.CreateDirectory(filePath);
                     }
                     using (var fileStream = new FileStream(Path.Combine(filePath, formFile.FileName), FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(fileStream);
-                        return Ok(ReadExcel(fileStream));
+					{
+						try
+						{
+                            JsonSerializerOptions options = new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            };
+                            await formFile.CopyToAsync(fileStream);
+                            string excelO = ReadExcel(fileStream);
+                            var objt = JsonConvert.DeserializeObject<AddExcelResponseVM>(excelO);
+                            return Ok();
+
+                        }
+						catch (Exception ex)
+						{
+                            
+
+                        }
+                   
                     }
                 }
             }
@@ -120,7 +137,9 @@ namespace PosReversalNIBBS_API.Controllers
 							}
 						}
 					}
-					if (rowList.Count > 0)
+
+					if ( rowList.Count > 0)
+						//Console.WriteLine("" + dtTable.Rows[0].Table.Columns.Count);
 						dtTable.Rows.Add(rowList.ToArray());
 					rowList.Clear();
 				}
@@ -136,19 +155,17 @@ namespace PosReversalNIBBS_API.Controllers
 			// conver excelDto to domain model
 			var excelRes = new ExcelResponse()
 			{
-				Terminal_Id = addExcelResponseVM.Terminal_Id,
-				Merchant_Id = addExcelResponseVM.Merchant_Id,
-				Processing_Code = addExcelResponseVM.Processing_Code,
-				Bin = addExcelResponseVM.Bin,
-				Pan = addExcelResponseVM.Pan,
-				Response_code= addExcelResponseVM.Response_code,
-				Amount= addExcelResponseVM.Amount,
-				System_Trace_Number = addExcelResponseVM.System_Trace_Number,
-				Retrieval_Ref_Number = addExcelResponseVM.Retrieval_Ref_Number,
-				IssuingBankName = addExcelResponseVM.IssuingBankName,
-				Transaction_Date = addExcelResponseVM.Transaction_Date,
-				Original_Data_Element = addExcelResponseVM.Original_Data_Element,
-				Processor_Name = addExcelResponseVM.Processor_Name
+				TERMINAL_ID = addExcelResponseVM.TERMINAL_ID,
+				MERCHANT_ID = addExcelResponseVM.MERCHANT_ID,
+                AMOUNT = addExcelResponseVM.AMOUNT,
+				STAN = addExcelResponseVM.STAN,
+				RRN = addExcelResponseVM.RRN,
+                PAN = addExcelResponseVM.PAN,
+                TRANSACTION_DATE = addExcelResponseVM.TRANSACTION_DATE,
+				PROCESSOR = addExcelResponseVM.PROCESSOR,
+				BANK = addExcelResponseVM.BANK
+				
+               
 			};
 
 			// pass domain object to Repository
@@ -176,20 +193,16 @@ namespace PosReversalNIBBS_API.Controllers
 			var excelResDTO = new ExcelResponseVM
 			{
 				Id = excelRes.Id,
-				Terminal_Id = excelRes.Terminal_Id,
-				Merchant_Id = excelRes.Merchant_Id,
-				Processing_Code = excelRes.Processing_Code,
-				Bin = excelRes.Bin,
-				Pan = excelRes.Pan,
-				Response_code = excelRes.Response_code,
-				Amount = excelRes.Amount,
-				System_Trace_Number = excelRes.System_Trace_Number,
-				Retrieval_Ref_Number = excelRes.Retrieval_Ref_Number,
-				IssuingBankName = excelRes.IssuingBankName,
-				Transaction_Date = excelRes.Transaction_Date,
-				Original_Data_Element = excelRes.Original_Data_Element,
-				Processor_Name = excelRes.Processor_Name,
-				Account_Id = excelRes.Account_Id
+				TERMINAL_ID = excelRes.TERMINAL_ID,
+				MERCHANT_ID = excelRes.MERCHANT_ID,
+				AMOUNT = excelRes.AMOUNT,
+				STAN = excelRes.STAN,
+				RRN = excelRes.RRN,
+				PAN = excelRes.PAN,
+				TRANSACTION_DATE= excelRes.TRANSACTION_DATE,
+				PROCESSOR = excelRes.PROCESSOR,
+				BANK = excelRes.BANK,
+				ACCOUNT_ID = excelRes.ACCOUNT_ID
 
 			};
 
