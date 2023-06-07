@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PosReversalNIBBS_API.Data;
 using PosReversalNIBBS_API.Models.Domain;
+using PosReversalNIBBS_API.Models.DTO;
 using PosReversalNIBBS_API.Repositories.IRepository;
 
 namespace PosReversalNIBBS_API.Repositories.Repository
@@ -16,9 +17,41 @@ namespace PosReversalNIBBS_API.Repositories.Repository
 		public async Task<ExcelResponse> AddAsync(ExcelResponse excelResponse)
 		{
 			excelResponse.Id = Guid.NewGuid();
+
+
+
 			await context.ExcelResponses.AddAsync(excelResponse);
 			await context.SaveChangesAsync();
 			return excelResponse;
+		}
+
+
+        public async Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelResponse)
+        {
+			ExcelResponse excelModel = new ExcelResponse
+			{
+				Id=Guid.NewGuid(),
+				TERMINAL_ID=excelResponse.TERMINAL_ID,
+				STAN=excelResponse.STAN.Substring(1),
+				RRN=excelResponse.RRN.Substring(1),
+				AMOUNT=excelResponse.AMOUNT,
+				BANK=excelResponse.BANK,	
+				MERCHANT_ID=excelResponse.MERCHANT_ID,
+				PAN=excelResponse.PAN,
+				PROCESSOR=excelResponse.PROCESSOR,
+				TRANSACTION_DATE=excelResponse.TRANSACTION_DATE,
+				
+
+			};
+            await context.ExcelResponses.AddAsync(excelModel);
+            await context.SaveChangesAsync();
+            return excelModel;
+        }
+
+        public async Task<ExcelResponse?> CheckDuplicate(AddExcelResponseVM addExcelResponseVM)
+		{
+			string stan = !String.IsNullOrEmpty(addExcelResponseVM.STAN) ? addExcelResponseVM.STAN.Substring(1) : "";
+			return await context.ExcelResponses.FirstOrDefaultAsync(x => x.STAN == stan && x.TERMINAL_ID == addExcelResponseVM.TERMINAL_ID);
 		}
 
 		public async Task<ExcelResponse> DeleteAsync(Guid id)

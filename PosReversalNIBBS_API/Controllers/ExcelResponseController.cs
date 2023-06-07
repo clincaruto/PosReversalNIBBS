@@ -7,6 +7,7 @@ using NPOI.XSSF.UserModel;
 using PosReversalNIBBS_API.Models.Domain;
 using PosReversalNIBBS_API.Models.DTO;
 using PosReversalNIBBS_API.Repositories.IRepository;
+using PosReversalNIBBS_API.Utilities;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -80,13 +81,30 @@ namespace PosReversalNIBBS_API.Controllers
                             };
                             await formFile.CopyToAsync(fileStream);
                             string excelO = ReadExcel(fileStream);
-                            var objt = JsonConvert.DeserializeObject<AddExcelResponseVM>(excelO);
-                            return Ok();
+							int duplicateOnDb = 0;
+                            var excelObjDeserialized = JsonConvert.DeserializeObject<AddExcelResponseVM[]>(excelO);
+							int deptCount;
+                           string check= CheckDuplicate.GetAllDuplicateTerminalFromExcel(excelObjDeserialized, out deptCount);
+							foreach (var excelItem in excelObjDeserialized)
+							{
+                             var checkObj= await  excelResponseRepository.CheckDuplicate(excelItem);
+								duplicateOnDb += (checkObj != null) ? 1 : 0;
+                                if (checkObj==null)
+								{
+									await excelResponseRepository.AddExcelAsync(excelItem);
+								}
+                            }
+							
+
+                            return Ok(new { duplicateOnTheExcel=check,
+								duplicateOnDb=duplicateOnDb,
+							status="Successfully uploaded"});
 
                         }
 						catch (Exception ex)
 						{
-                            
+
+                            return BadRequest(ex.Message);
 
                         }
                    

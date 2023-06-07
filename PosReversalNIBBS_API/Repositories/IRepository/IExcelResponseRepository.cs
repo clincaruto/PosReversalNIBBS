@@ -1,4 +1,5 @@
 ﻿using PosReversalNIBBS_API.Models.Domain;
+using PosReversalNIBBS_API.Models.DTO;
 
 namespace PosReversalNIBBS_API.Repositories.IRepository
 {
@@ -9,5 +10,7 @@ namespace PosReversalNIBBS_API.Repositories.IRepository
         Task<ExcelResponse> AddAsync(ExcelResponse excelResponse);
         Task<ExcelResponse> UpdateAsync(Guid id, ExcelResponse excelResponse);
         Task<ExcelResponse> DeleteAsync(Guid id);
+        Task<ExcelResponse?> CheckDuplicate(AddExcelResponseVM addExcelResponseVM);
+        Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelResponse);
     }
 }

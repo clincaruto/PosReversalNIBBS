@@ -6,8 +6,12 @@ namespace PosReversalNIBBS_API.Configurations.Implementation
 {
     public class PositionOfficeManager
     {
-      // private PosNibbsDbContext context = new PosNibbsDbContext();
-
+        private PosNibbsDbContext _context;
+        // = new PosNibbsDbContext();
+        public PositionOfficeManager(PosNibbsDbContext context)
+        {
+            _context= context;
+        }
         public void GetAccountFromPositionOffice()
         {
             string connectionString = "Data Source=172.25.1.247,1554;Initial Catalog=position_office;User ID=pos_auto_revsl;Password=Auto@1234$";
@@ -32,19 +36,18 @@ namespace PosReversalNIBBS_API.Configurations.Implementation
                 {
                     try
                     {
-                        var context = new PosNibbsDbContext();
+                        //var context = TryUpdateModelAsyncnew PosNibbsDbContext();
 
-                        var entity = new ExcelResponse()
-                        {
-                            Account_Id = reader.GetInt32(1)
-                        };
+
 
                         // This is to check whether the record already exist in the db
-                        var records = context.ExcelResponses.Where(x => x.Processor_Name.ToLower().Trim() == entity.Processor_Name.ToLower().Trim()).FirstOrDefault();
+                        var records = _context.ExcelResponses.FirstOrDefault(x => x.ACCOUNT_ID == null && x.TERMINAL_ID == reader["terminal_id"].ToString());
                         if (records == null)
                         {
-                            context.ExcelResponses.Add(entity);
-                            context.SaveChanges();
+                            
+                            records.ACCOUNT_ID = reader["ACCOUNT"].ToString();
+                           // _context.ExcelResponses.Update(records);
+                            _context.SaveChanges();
                         }
                     }
                     catch (Exception)

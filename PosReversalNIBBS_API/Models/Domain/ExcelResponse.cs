@@ -13,6 +13,6 @@
         public string TRANSACTION_DATE { get; set; }
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
-        public int ACCOUNT_ID { get; set; }
+        public string? ACCOUNT_ID { get; set; }
     }
 }
