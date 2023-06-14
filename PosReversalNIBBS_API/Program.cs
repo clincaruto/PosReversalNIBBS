@@ -19,6 +19,12 @@ namespace PosReversalNIBBS_API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //services cors
+            builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+            {
+                builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+            }));
+
             builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
             builder.Services.AddDbContext<PosNibbsDbContext>(options => 
@@ -32,14 +38,21 @@ namespace PosReversalNIBBS_API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseSwagger();
+            //    app.UseSwaggerUI();
+            //}
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            //Cors config
+          //  app.UseCors(builder => builder.WithOrigins("*").AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
+            app.UseCors("corsapp");
             app.UseAuthorization();
 
 
