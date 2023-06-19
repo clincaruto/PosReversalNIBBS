@@ -46,16 +46,15 @@ namespace POSReversalNIBBSBackground.Services
         {
           //  string dbDateString = "2023-04-02T17:00:07.547";
 
-            DateTime dbDate =isUp? DateTime.Parse(dbDateString).AddDays(2): DateTime.Parse(dbDateString).AddDays(-2);
-            DateTime newDate = new DateTime(dbDate.Year, dbDate.Month, 1, 0, 0, 0, 0);
-
-            string newDateString = newDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            DateTime dbDate =isUp? DateTime.Parse(dbDateString).AddDays(5): DateTime.Parse(dbDateString).AddDays(-5);
+          
+            string newDateString = dbDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
             return newDateString;
         }
         public void UpdateAllTheRecords( List<ExcelResponse> excelRecords) {
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true; 
 
-            string connectionString = "Server=172.25.1.247,1554; Initial Catalog=position_office;  User ID=pos_auto_revsl;Password=Auto@1234$;Encrypt=True;TrustServerCertificate=True;";
+            string connectionString = "Server=172.25.1.247,1554; Initial Catalog=postilion_office;User ID=pos_auto_revsl;Password=Auto@1234$;Encrypt=True;TrustServerCertificate=True;";
 
             foreach (var item in excelRecords)
             {
@@ -81,37 +80,47 @@ namespace POSReversalNIBBSBackground.Services
                     "and retrieval_reference_nr in (@RRN) " +
                     "and system_trace_audit_nr in (@STAN);";
 
-                SqlCommand command = new SqlCommand(sqlQuery, conn);
+                    sqlQuery=sqlQuery.Replace("@panLeft", $"'{ item.PAN.Substring(0, 6)}'");    
+                    sqlQuery=sqlQuery.Replace("@panRight", $"'{ item.PAN.Substring(12, 4)}'");   
+                    sqlQuery=sqlQuery.Replace("@terminalId", $"'{ item.TERMINAL_ID}'");   
+                    sqlQuery=sqlQuery.Replace("@RRN", $"'{ item.RRN}'");   
+                    sqlQuery=sqlQuery.Replace("@STAN", $"'{ item.STAN}'");   
+                    sqlQuery=sqlQuery.Replace("@downDate", $"'{UpDownDate(item.TRANSACTION_DATE, false)}'");   
+                    sqlQuery=sqlQuery.Replace("@upDate", $"'{UpDownDate(item.TRANSACTION_DATE, true)}'");   
+                   
 
-                SqlParameter parameter= new SqlParameter();
-                parameter.ParameterName = "@panLeft";
-                parameter.Value = item.PAN.Substring(0, 6);
-                command.Parameters.Add(parameter);
-                SqlParameter parameterRight = new SqlParameter();
-                parameterRight.ParameterName = "@panLeft";
-                parameterRight.Value = item.PAN.Substring(12, 4);
-                command.Parameters.Add(parameterRight);
-                SqlParameter parameterTerminalId = new SqlParameter();
-                parameterTerminalId.ParameterName = "@terminalId";
-                parameterTerminalId.Value = item.TERMINAL_ID;
-                command.Parameters.Add(parameterTerminalId);
-                SqlParameter parameterRRN = new SqlParameter();
-                parameterRRN.ParameterName = "@RRN";
-                parameterRRN.Value = item.RRN;
-                command.Parameters.Add(parameterRRN);
-                SqlParameter parameterSTAN = new SqlParameter();
-                parameterSTAN.ParameterName = "@STAN";
-                parameterSTAN.Value = item.STAN;
-                command.Parameters.Add(parameterSTAN);
-                SqlParameter parameterDownDate = new SqlParameter();
-                parameterDownDate.ParameterName = "@downDate";
-                parameterDownDate.Value = UpDownDate(item.TRANSACTION_DATE, false);
-                command.Parameters.Add(parameterDownDate);
 
-                SqlParameter parameterUpDate = new SqlParameter();
-                parameterUpDate.ParameterName = "@upDate";
-                parameterUpDate.Value = UpDownDate(item.TRANSACTION_DATE, true);
-                command.Parameters.Add(parameterUpDate);
+                   SqlCommand command = new SqlCommand(sqlQuery, conn);
+
+                //SqlParameter parameter= new SqlParameter();
+                //parameter.ParameterName = "@panLeft";
+                //parameter.Value = item.PAN.Substring(0, 6);
+                //command.Parameters.Add(parameter);
+                //SqlParameter parameterRight = new SqlParameter();
+                //parameterRight.ParameterName = "@panRight";
+                //parameterRight.Value = item.PAN.Substring(12, 4);
+                //command.Parameters.Add(parameterRight);
+                //SqlParameter parameterTerminalId = new SqlParameter();
+                //parameterTerminalId.ParameterName = "@terminalId";
+                //parameterTerminalId.Value = item.TERMINAL_ID;
+                //command.Parameters.Add(parameterTerminalId);
+                //SqlParameter parameterRRN = new SqlParameter();
+                //parameterRRN.ParameterName = "@RRN";
+                //parameterRRN.Value = item.RRN;
+                //command.Parameters.Add(parameterRRN);
+                //SqlParameter parameterSTAN = new SqlParameter();
+                //parameterSTAN.ParameterName = "@STAN";
+                //parameterSTAN.Value = item.STAN;
+                //command.Parameters.Add(parameterSTAN);
+                //SqlParameter parameterDownDate = new SqlParameter();
+                //parameterDownDate.ParameterName = "@downDate";
+                //parameterDownDate.Value = UpDownDate(item.TRANSACTION_DATE, false);
+                //command.Parameters.Add(parameterDownDate);
+
+                //SqlParameter parameterUpDate = new SqlParameter();
+                //parameterUpDate.ParameterName = "@upDate";
+                //parameterUpDate.Value = UpDownDate(item.TRANSACTION_DATE, true);
+                //command.Parameters.Add(parameterUpDate);
                 SqlDataReader reader = command.ExecuteReader();
 
 
