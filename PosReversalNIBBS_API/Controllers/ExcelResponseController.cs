@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace PosReversalNIBBS_API.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize]
 	public class ExcelResponseController : Controller
 	{
 		private readonly IExcelResponseRepository excelResponseRepository;
