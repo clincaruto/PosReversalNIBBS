@@ -32,12 +32,30 @@ namespace PosReversalNIBBS_API.Controllers
 		[HttpGet]
 		public async Task <IActionResult> GetAllExcelAsync()
 		{
-			var excelRes = await excelResponseRepository.GetAllAsync();
-			var excelResDTO = mapper.Map<List<ExcelResponseVM>>(excelRes);
-			return Ok(excelResDTO);
-		}
 
-		[HttpGet]
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+
+            if (!string.IsNullOrEmpty(authorizationHeader))
+            {
+                string token = authorizationHeader.Replace("Bearer ", "");
+                var excelRes = await excelResponseRepository.GetAllAsync();
+                var excelResDTO = mapper.Map<List<ExcelResponseVM>>(excelRes);
+                return Ok(excelResDTO);
+            }
+            else
+            {
+                // Authorization header is not present
+                return BadRequest("Authorization header is missing.");
+            }
+
+
+           
+           
+		
+		}
+      
+
+        [HttpGet]
 		[Route("{id:guid}")]
 		[ActionName("GetExcelAsyncById")]
 		public async Task<IActionResult> GetExcelAsyncById(Guid id) 
