@@ -61,80 +61,103 @@ namespace PosReversalNIBBS_API.Controllers
 		[ActionName("GetExcelAsyncById")]
 		public async Task<IActionResult> GetExcelAsyncById(Guid id) 
 		{
-			var excelRes = await excelResponseRepository.GetAsync(id);
-
-			if (excelRes == null) 
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+			if (!string.IsNullOrEmpty(authorizationHeader))
 			{
-				return NotFound();
-				//return BadRequest("Data not found");
-			}
+                var excelRes = await excelResponseRepository.GetAsync(id);
 
-			var excelResDTO = mapper.Map<ExcelResponseVM>(excelRes);
-			return Ok(excelResDTO);
+                if (excelRes == null)
+                {
+                    return NotFound();
+                    //return BadRequest("Data not found");
+                }
+
+                var excelResDTO = mapper.Map<ExcelResponseVM>(excelRes);
+                return Ok(excelResDTO);
+			}
+			else
+			{
+                // Authorization header is not present
+                return BadRequest("Authorization header is missing.");
+            }
+            
 		}
 
         [HttpPost]
         [Route("file-upload")]
         public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
         {
-            long size = files.Sum(f => f.Length);
-          
-          
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+			if (!string.IsNullOrEmpty(authorizationHeader))
+			{
 
+                long size = files.Sum(f => f.Length);
+
+
+                foreach (var formFile in files)
                 {
-					var filePath  = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
-                    if (!Directory.Exists(filePath))
-					{
-                        Directory.CreateDirectory(filePath);
-                    }
-                    using (var fileStream = new FileStream(Path.Combine(filePath, formFile.FileName), FileMode.Create))
-					{
-						try
-						{
-                            JsonSerializerOptions options = new JsonSerializerOptions
+                    if (formFile.Length > 0)
+
+                    {
+                        var filePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+                        if (!Directory.Exists(filePath))
+                        {
+                            Directory.CreateDirectory(filePath);
+                        }
+                        using (var fileStream = new FileStream(Path.Combine(filePath, formFile.FileName), FileMode.Create))
+                        {
+                            try
                             {
-                                PropertyNameCaseInsensitive = true
-                            };
-                            await formFile.CopyToAsync(fileStream);
-                            string excelO = ReadExcel(fileStream);
-							int duplicateOnDb = 0;
-                            var excelObjDeserialized = JsonConvert.DeserializeObject<AddExcelResponseVM[]>(excelO);
-							int deptCount;
-                           string check= CheckDuplicate.GetAllDuplicateTerminalFromExcel(excelObjDeserialized, out deptCount);
-							foreach (var excelItem in excelObjDeserialized)
-							{
-                             var checkObj= await  excelResponseRepository.CheckDuplicate(excelItem);
-								duplicateOnDb += (checkObj != null) ? 1 : 0;
-                                if (checkObj==null)
-								{
-									await excelResponseRepository.AddExcelAsync(excelItem);
-								}
+                                JsonSerializerOptions options = new JsonSerializerOptions
+                                {
+                                    PropertyNameCaseInsensitive = true
+                                };
+                                await formFile.CopyToAsync(fileStream);
+                                string excelO = ReadExcel(fileStream);
+                                int duplicateOnDb = 0;
+                                var excelObjDeserialized = JsonConvert.DeserializeObject<AddExcelResponseVM[]>(excelO);
+                                int deptCount;
+                                string check = CheckDuplicate.GetAllDuplicateTerminalFromExcel(excelObjDeserialized, out deptCount);
+                                foreach (var excelItem in excelObjDeserialized)
+                                {
+                                    var checkObj = await excelResponseRepository.CheckDuplicate(excelItem);
+                                    duplicateOnDb += (checkObj != null) ? 1 : 0;
+                                    if (checkObj == null)
+                                    {
+                                        await excelResponseRepository.AddExcelAsync(excelItem);
+                                    }
+                                }
+
+
+                                return Ok(new
+                                {
+                                    duplicateOnTheExcel = check,
+                                    duplicateOnDb = duplicateOnDb,
+                                    status = "Successfully uploaded"
+                                });
+
                             }
-							
+                            catch (Exception ex)
+                            {
 
-                            return Ok(new { duplicateOnTheExcel=check,
-								duplicateOnDb=duplicateOnDb,
-							status="Successfully uploaded"});
+                                return BadRequest(ex.Message);
 
-                        }
-						catch (Exception ex)
-						{
-
-                            return BadRequest(ex.Message);
+                            }
 
                         }
-                   
                     }
                 }
+
+                // Process uploaded files
+                // Don't rely on or trust the FileName property without validation.
+
+                return Ok(new { count = files.Count, size });
             }
-
-            // Process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-
-            return Ok(new { count = files.Count, size });
+			else
+			{
+                // Authorization header is not present
+                return BadRequest("Authorization header is missing.");
+            }
         }
 
 
@@ -189,28 +212,38 @@ namespace PosReversalNIBBS_API.Controllers
         [HttpPost]
 		public async Task<IActionResult> AddExcelAsync(AddExcelResponseVM addExcelResponseVM)
 		{
-			// conver excelDto to domain model
-			var excelRes = new ExcelResponse()
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+			if (!string.IsNullOrEmpty(authorizationHeader))
 			{
-				TERMINAL_ID = addExcelResponseVM.TERMINAL_ID,
-				MERCHANT_ID = addExcelResponseVM.MERCHANT_ID,
-                AMOUNT = addExcelResponseVM.AMOUNT,
-				STAN = addExcelResponseVM.STAN,
-				RRN = addExcelResponseVM.RRN,
-                PAN = addExcelResponseVM.PAN,
-                TRANSACTION_DATE = addExcelResponseVM.TRANSACTION_DATE,
-				PROCESSOR = addExcelResponseVM.PROCESSOR,
-				BANK = addExcelResponseVM.BANK
-				
-               
-			};
+                // conver excelDto to domain model
+                var excelRes = new ExcelResponse()
+                {
+                    TERMINAL_ID = addExcelResponseVM.TERMINAL_ID,
+                    MERCHANT_ID = addExcelResponseVM.MERCHANT_ID,
+                    AMOUNT = addExcelResponseVM.AMOUNT,
+                    STAN = addExcelResponseVM.STAN,
+                    RRN = addExcelResponseVM.RRN,
+                    PAN = addExcelResponseVM.PAN,
+                    TRANSACTION_DATE = addExcelResponseVM.TRANSACTION_DATE,
+                    PROCESSOR = addExcelResponseVM.PROCESSOR,
+                    BANK = addExcelResponseVM.BANK
 
-			// pass domain object to Repository
-			excelRes = await excelResponseRepository.AddAsync(excelRes);
 
-			// Convert the domain back to DTO
-			var excelResDTO = mapper.Map<ExcelResponseVM>(excelRes);
-			return CreatedAtAction(nameof(GetExcelAsyncById), new { id = excelResDTO.Id}, excelResDTO);
+                };
+
+                // pass domain object to Repository
+                excelRes = await excelResponseRepository.AddAsync(excelRes);
+
+                // Convert the domain back to DTO
+                var excelResDTO = mapper.Map<ExcelResponseVM>(excelRes);
+                return CreatedAtAction(nameof(GetExcelAsyncById), new { id = excelResDTO.Id }, excelResDTO);
+            }
+			else
+			{
+                // Authorization header is not present
+                return BadRequest("Authorization header is missing.");
+            }
+           
 
 		}
 

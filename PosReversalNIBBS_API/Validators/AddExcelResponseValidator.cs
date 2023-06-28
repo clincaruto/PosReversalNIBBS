@@ -8,6 +8,11 @@ namespace PosReversalNIBBS_API.Validators
         public AddExcelResponseValidator()
         {
             RuleFor(x => x.TERMINAL_ID).NotEmpty().WithMessage("This field is required");
+            RuleFor(x => x.MERCHANT_ID).NotEmpty().WithMessage("This field is required");
+            RuleFor(x => x.AMOUNT).NotEmpty();
+            RuleFor(x => x.STAN).NotEmpty().WithMessage("This field is required");
+            RuleFor(x => x.RRN).NotEmpty().WithMessage("This field is required");
+
         }
     }
 }
