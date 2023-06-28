@@ -8,7 +8,7 @@ namespace PosReversalNIBBS_API.Utilities
 {
     public static class JWTDecryption
     {
-        public static bool JWT(string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjg3ODc2Mjc2LCJqdGkiOiI5OWJmY2E4Mi02NjRlLTQ2MDctYTdjMi05NWZjMTdhZDRiYzIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoia2VoaW5kZS5vbW9zZWhpbkB1YmFncm91cC5jb20iLCJuYmYiOjE2ODc4NzYyNzYsImV4cCI6MTY4Nzg3Njg3Nn0.ISu6rhVNR6_vJ5-RxIF8C8I46qXUrtBksoiMnmUJrLo")
+        public static bool JWTChecker(string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjg3ODc2Mjc2LCJqdGkiOiI5OWJmY2E4Mi02NjRlLTQ2MDctYTdjMi05NWZjMTdhZDRiYzIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoia2VoaW5kZS5vbW9zZWhpbkB1YmFncm91cC5jb20iLCJuYmYiOjE2ODc4NzYyNzYsImV4cCI6MTY4Nzg3Njg3Nn0.ISu6rhVNR6_vJ5-RxIF8C8I46qXUrtBksoiMnmUJrLo")
         {
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

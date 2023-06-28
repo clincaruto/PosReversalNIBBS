@@ -38,6 +38,7 @@ namespace PosReversalNIBBS_API.Controllers
             if (!string.IsNullOrEmpty(authorizationHeader))
             {
                 string token = authorizationHeader.Replace("Bearer ", "");
+				bool checker = JWTDecryption.JWTChecker(token);
                 var excelRes = await excelResponseRepository.GetAllAsync();
                 var excelResDTO = mapper.Map<List<ExcelResponseVM>>(excelRes);
                 return Ok(excelResDTO);
