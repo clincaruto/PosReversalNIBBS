@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using PosReversalNIBBS_API.Models.DTO;
 using PosReversalNIBBS_API.Repositories.IRepository;
+using PosReversalNIBBS_API.Utilities;
 
 namespace PosReversalNIBBS_API.Controllers
 {
@@ -26,15 +27,23 @@ namespace PosReversalNIBBS_API.Controllers
 
             // Check if user is authenticated
             // Check username and Password
-            var user = await userRepository.AuthenticateAsync(loginRequest.Username, loginRequest.Password);
-
-            if (user != null)
+            //var user = await userRepository.AuthenticateAsync(loginRequest.Username, loginRequest.Password);
+            loginRequest.Username = loginRequest.Username.Replace("@ubagroup.com", "");
+            var checkAdRequest = await AuthADService.ValidateUserOnADAsync(loginRequest);
+            if (checkAdRequest)
             {
-                // Generate a JWT Token
-                var token = await tokenHandler.CreateTokenAsync(user);
-                return Ok(token);
-            }
 
+                //var user = await AuthADService.GetUserDetails(loginRequest.Username); ;
+
+
+               
+                    // Generate a JWT Token
+                    var token = await tokenHandler.CreateTokenAsync(loginRequest);
+                    return Ok(new { responseData=token,
+                    message="Successfully"});
+                
+            }
+            else
             return BadRequest("Username or Password is incorrect.");
 
         }
