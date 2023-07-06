@@ -64,6 +64,9 @@ namespace PosReversalNIBBS_API.Controllers
             string authorizationHeader = HttpContext.Request.Headers["Authorization"];
 			if (!string.IsNullOrEmpty(authorizationHeader))
 			{
+                string token = authorizationHeader.Replace("Bearer ", "");
+                bool checker = JWTDecryption.JWTChecker(token);
+
                 var excelRes = await excelResponseRepository.GetAsync(id);
 
                 if (excelRes == null)
@@ -90,6 +93,8 @@ namespace PosReversalNIBBS_API.Controllers
             string authorizationHeader = HttpContext.Request.Headers["Authorization"];
 			if (!string.IsNullOrEmpty(authorizationHeader))
 			{
+                string token = authorizationHeader.Replace("Bearer ", "");
+                bool checker = JWTDecryption.JWTChecker(token);
 
                 long size = files.Sum(f => f.Length);
 
@@ -215,6 +220,8 @@ namespace PosReversalNIBBS_API.Controllers
             string authorizationHeader = HttpContext.Request.Headers["Authorization"];
 			if (!string.IsNullOrEmpty(authorizationHeader))
 			{
+                string token = authorizationHeader.Replace("Bearer ", "");
+                bool checker = JWTDecryption.JWTChecker(token);
                 // conver excelDto to domain model
                 var excelRes = new ExcelResponse()
                 {
