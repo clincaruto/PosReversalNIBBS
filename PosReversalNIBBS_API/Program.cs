@@ -17,6 +17,7 @@ namespace PosReversalNIBBS_API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             // builder.Services.AddSwaggerGen();
@@ -60,6 +61,7 @@ namespace PosReversalNIBBS_API
             });
 
             builder.Services.AddScoped<IExcelResponseRepository, ExcelResponseRepository>();
+            builder.Services.AddScoped<IUploadedExcelDetailsRepository, UploadExcelDetailRepository>();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             var app = builder.Build();

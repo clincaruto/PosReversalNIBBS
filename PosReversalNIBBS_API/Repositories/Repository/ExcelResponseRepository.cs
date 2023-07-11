@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Asn1.X500;
 using PosReversalNIBBS_API.Data;
 using PosReversalNIBBS_API.Models.Domain;
 using PosReversalNIBBS_API.Models.DTO;
 using PosReversalNIBBS_API.Repositories.IRepository;
+using System.Diagnostics;
 
 namespace PosReversalNIBBS_API.Repositories.Repository
 {
@@ -17,35 +20,35 @@ namespace PosReversalNIBBS_API.Repositories.Repository
 		public async Task<ExcelResponse> AddAsync(ExcelResponse excelResponse)
 		{
 			excelResponse.Id = Guid.NewGuid();
-
-
-
 			await context.ExcelResponses.AddAsync(excelResponse);
 			await context.SaveChangesAsync();
 			return excelResponse;
 		}
 
 
-        public async Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelResponse)
+        public async Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelResponse    )
         {
-			ExcelResponse excelModel = new ExcelResponse
+			ExcelResponse excelModel = new();
+            try
 			{
-				Id=Guid.NewGuid(),
-				TERMINAL_ID=excelResponse.TERMINAL_ID,
-				STAN=excelResponse.STAN.Substring(1),
-				RRN=excelResponse.RRN.Substring(1),
-				AMOUNT=excelResponse.AMOUNT,
-				BANK=excelResponse.BANK,	
-				MERCHANT_ID=excelResponse.MERCHANT_ID,
-				PAN=excelResponse.PAN,
-				PROCESSOR=excelResponse.PROCESSOR,
-				TRANSACTION_DATE=excelResponse.TRANSACTION_DATE,
-				
-
-			};
-            await context.ExcelResponses.AddAsync(excelModel);
-            await context.SaveChangesAsync();
-            return excelModel;
+				excelModel.Id = Guid.NewGuid();
+				excelModel.TERMINAL_ID = excelResponse.TERMINAL_ID;
+				excelModel.STAN = excelResponse.STAN.Substring(1);
+				excelModel.RRN = excelResponse.RRN.Substring(1);
+				excelModel.AMOUNT = excelResponse.AMOUNT;
+				excelModel.BANK = excelResponse.BANK;
+				excelModel.MERCHANT_ID = excelResponse.MERCHANT_ID;
+				excelModel.PAN = excelResponse.PAN;
+				excelModel.PROCESSOR = excelResponse.PROCESSOR;
+				excelModel.TRANSACTION_DATE = excelResponse.TRANSACTION_DATE;
+				excelModel.UploadedExcelDetailBatchId = excelResponse.BatchId;
+                await context.ExcelResponses.AddAsync(excelModel);
+				await context.SaveChangesAsync();
+                return excelModel;
+            }
+            catch (Exception ex) {
+                return new ExcelResponse();
+            }
         }
 
         public async Task<ExcelResponse?> CheckDuplicate(AddExcelResponseVM addExcelResponseVM)

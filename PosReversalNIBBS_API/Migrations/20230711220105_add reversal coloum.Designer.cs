@@ -12,8 +12,8 @@ using PosReversalNIBBS_API.Data;
 namespace PosReversalNIBBS_API.Migrations
 {
     [DbContext(typeof(PosNibbsDbContext))]
-    [Migration("20230607192413_Account_ID update")]
-    partial class Account_IDupdate
+    [Migration("20230711220105_add reversal coloum")]
+    partial class addreversalcoloum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,9 @@ namespace PosReversalNIBBS_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Reversal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("STAN")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -69,9 +72,67 @@ namespace PosReversalNIBBS_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UploadedExcelDetailBatchId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UploadedExcelDetailBatchId");
+
                     b.ToTable("ExcelResponses");
+                });
+
+            modelBuilder.Entity("PosReversalNIBBS_API.Models.Domain.UploadedExcelDetail", b =>
+                {
+                    b.Property<Guid>("BatchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateUploaded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("TotalTransaction")
+                        .HasColumnType("float");
+
+                    b.HasKey("BatchId");
+
+                    b.ToTable("UploadedExcelDetails");
+                });
+
+            modelBuilder.Entity("PosReversalNIBBS_API.Models.Domain.ExcelResponse", b =>
+                {
+                    b.HasOne("PosReversalNIBBS_API.Models.Domain.UploadedExcelDetail", "uploadedExcelDetail")
+                        .WithMany()
+                        .HasForeignKey("UploadedExcelDetailBatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("uploadedExcelDetail");
                 });
 #pragma warning restore 612, 618
         }

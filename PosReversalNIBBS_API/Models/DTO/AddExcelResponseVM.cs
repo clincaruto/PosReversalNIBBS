@@ -13,6 +13,7 @@
         public string TRANSACTION_DATE { get; set; }
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
+        public Guid BatchId { get; set; }
         
     }
 }

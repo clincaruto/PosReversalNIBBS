@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
@@ -20,13 +21,15 @@ namespace PosReversalNIBBS_API.Controllers
 	public class ExcelResponseController : Controller
 	{
 		private readonly IExcelResponseRepository excelResponseRepository;
-		private readonly IMapper mapper;
+        private readonly IUploadedExcelDetailsRepository uploadedExcelDetailsRepository;
+        private readonly IMapper mapper;
 
 
-		public ExcelResponseController(IExcelResponseRepository excelResponseRepository, IMapper mapper)
+		public ExcelResponseController(IExcelResponseRepository excelResponseRepository, IUploadedExcelDetailsRepository uploadedExcelDetailsRepository, IMapper mapper)
 		{
 			this.excelResponseRepository = excelResponseRepository;
-			this.mapper = mapper;
+            this.uploadedExcelDetailsRepository = uploadedExcelDetailsRepository;
+            this.mapper = mapper;
 		}
 
 		[HttpGet]
@@ -101,9 +104,17 @@ namespace PosReversalNIBBS_API.Controllers
 
                 foreach (var formFile in files)
                 {
+                   string filename= formFile.FileName;
+                    //
+                  
+
                     if (formFile.Length > 0)
 
                     {
+                    
+
+
+
                         var filePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
                         if (!Directory.Exists(filePath))
                         {
@@ -111,6 +122,20 @@ namespace PosReversalNIBBS_API.Controllers
                         }
                         using (var fileStream = new FileStream(Path.Combine(filePath, formFile.FileName), FileMode.Create))
                         {
+                            var filePt= $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}/UploadedFiles/{formFile.FileName}";
+                            // Convert DTO to Domain Model
+                            var excel = new UploadedExcelDetail
+                            {
+                                BatchId = Guid.NewGuid(),
+                                DateUploaded = DateTime.Now,
+                                FileExtension = formFile.ContentType,
+                                FileName = filename,
+                                FilePath= filePt,
+
+                            };
+                            //Save this record first;
+                            excel = await uploadedExcelDetailsRepository.Upload(excel);
+                                
                             try
                             {
                                 JsonSerializerOptions options = new JsonSerializerOptions
@@ -122,23 +147,52 @@ namespace PosReversalNIBBS_API.Controllers
                                 int duplicateOnDb = 0;
                                 var excelObjDeserialized = JsonConvert.DeserializeObject<AddExcelResponseVM[]>(excelO);
                                 int deptCount;
+                                int countRecords =0;
+                                double totalAmount = 0;
                                 string check = CheckDuplicate.GetAllDuplicateTerminalFromExcel(excelObjDeserialized, out deptCount);
                                 foreach (var excelItem in excelObjDeserialized)
                                 {
+                                 
                                     var checkObj = await excelResponseRepository.CheckDuplicate(excelItem);
+                                    
                                     duplicateOnDb += (checkObj != null) ? 1 : 0;
                                     if (checkObj == null)
                                     {
-                                        await excelResponseRepository.AddExcelAsync(excelItem);
+                                        excelItem.BatchId = excel.BatchId;
+                                       // Debug to see the Guid.NewGuid generated Id is being used for saving in the DB
+
+                                        // Edit this method to take the batchId excelResponseRepository.AddExcelAsync(excelItem)
+
+                                        var checkSave =  await excelResponseRepository.AddExcelAsync(excelItem);
+                                        countRecords += (checkSave != null) ? 1 : 0;
+
+                                        totalAmount += checkSave.AMOUNT; //!=null?checkSave.AMOUNT: 0;
                                     }
+                                }
+                             
+                                    if (countRecords > 0) {
+                                    //countRecords
+                                    //totalAmount
+
+
+
+                                    //write a method to do update  using batchId ;
+                                    //
+                                    var model= new UploadedExcelDetail { TotalAmount= totalAmount, TotalTransaction=countRecords };
+                                    //var updatebatch = UpdateBatch(excel.BatchId, model);
+                                    var batch = await uploadedExcelDetailsRepository.UpdateAsync(excel.BatchId, model);
+
+
+
                                 }
 
 
                                 return Ok(new
                                 {
                                     duplicateOnTheExcel = check,
-                                    duplicateOnDb = duplicateOnDb,
-                                    status = "Successfully uploaded"
+                                    duplicateOnDb,
+                                    status = "Successfully uploaded",
+                                    savedRecords= countRecords
                                 });
 
                             }
@@ -254,37 +308,39 @@ namespace PosReversalNIBBS_API.Controllers
 
 		}
 
-		[HttpDelete]
-		[Route("{id:guid}")]
-		public async Task<IActionResult> DeleteExcelAsync(Guid id)
-		{
-			// call repository to delete excel
-			var excelRes = await excelResponseRepository.DeleteAsync(id);
+		//[HttpDelete]
+		//[Route("{id:guid}")]
+		//public async Task<IActionResult> DeleteExcelAsync(Guid id)
+		//{
+		//	// call repository to delete excel
+		//	var excelRes = await excelResponseRepository.DeleteAsync(id);
 
-			if (excelRes == null)
-			{
-				return NotFound();
-			}
+		//	if (excelRes == null)
+		//	{
+		//		return NotFound();
+		//	}
 
-			// Convert response back to DTO
-			var excelResDTO = new ExcelResponseVM
-			{
-				Id = excelRes.Id,
-				TERMINAL_ID = excelRes.TERMINAL_ID,
-				MERCHANT_ID = excelRes.MERCHANT_ID,
-				AMOUNT = excelRes.AMOUNT,
-				STAN = excelRes.STAN,
-				RRN = excelRes.RRN,
-				PAN = excelRes.PAN,
-				TRANSACTION_DATE= excelRes.TRANSACTION_DATE,
-				PROCESSOR = excelRes.PROCESSOR,
-				BANK = excelRes.BANK,
-				ACCOUNT_ID = excelRes.ACCOUNT_ID
+		//	// Convert response back to DTO
+		//	var excelResDTO = new ExcelResponseVM
+		//	{
+		//		Id = excelRes.Id,
+		//		TERMINAL_ID = excelRes.TERMINAL_ID,
+		//		MERCHANT_ID = excelRes.MERCHANT_ID,
+		//		AMOUNT = excelRes.AMOUNT,
+		//		STAN = excelRes.STAN,
+		//		RRN = excelRes.RRN,
+		//		PAN = excelRes.PAN,
+		//		TRANSACTION_DATE= excelRes.TRANSACTION_DATE,
+		//		PROCESSOR = excelRes.PROCESSOR,
+		//		BANK = excelRes.BANK,
+		//		ACCOUNT_ID = excelRes.ACCOUNT_ID
 
-			};
+		//	};
 
-			return Ok(excelResDTO);
-		}
+		//	return Ok(excelResDTO);
+		//}
+
+        
 
 
 
@@ -307,6 +363,29 @@ namespace PosReversalNIBBS_API.Controllers
 
 			return true;
 		}
+
+        private async Task<IActionResult> UpdateBatch(Guid id, UpdateUploadedExcelDetailVM updateUploadedExcelDetailVM)
+        {
+            // Map DTO to domain model
+
+            //var uploadDomain = new UploadedExcelDetail
+            //{
+
+            //}
+            var uploadDomain = mapper.Map<UploadedExcelDetail> (updateUploadedExcelDetailVM);
+            
+            // check if it exist
+            uploadDomain = await uploadedExcelDetailsRepository.UpdateAsync(id, uploadDomain);
+            if (uploadDomain == null)
+            {
+                return NotFound();
+            }
+
+            // Map Domain back to Dto
+            var uploadDTO = mapper.Map<UploadedExcelDetailVM>(uploadDomain);
+            return Ok(uploadDTO);
+        }
+
 
         #endregion
 

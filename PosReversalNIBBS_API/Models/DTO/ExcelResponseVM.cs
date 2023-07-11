@@ -1,4 +1,6 @@
-﻿namespace PosReversalNIBBS_API.Models.DTO
+﻿using PosReversalNIBBS_API.Models.Domain;
+
+namespace PosReversalNIBBS_API.Models.DTO
 {
     public class ExcelResponseVM
     {
@@ -14,5 +16,11 @@
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
         public string ACCOUNT_ID { get; set; }
+        public string? Reversal { get; set; }
+
+        public Guid? UploadedExcelDetailBatchId { get; set; }
+
+        // Navigation properties
+       // public UploadedExcelDetailVM UploadedExcelDetail { get; set; }
     }
 }

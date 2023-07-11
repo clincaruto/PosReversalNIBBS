@@ -9,6 +9,9 @@ namespace PosReversalNIBBS_API.Configurations.Profiles
 		public MapperConfig()
 		{
 			CreateMap<ExcelResponse, ExcelResponseVM>().ReverseMap();
+			CreateMap<UpdateUploadedExcelDetailVM, UploadedExcelDetail>().ReverseMap();
+
+			CreateMap<UploadedExcelDetail, FileUploadDto>().ReverseMap();
 		}
 	}
 }

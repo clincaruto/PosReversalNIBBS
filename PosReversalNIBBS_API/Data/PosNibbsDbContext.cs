@@ -16,5 +16,6 @@ namespace PosReversalNIBBS_API.Data
         //    base.OnModelCreating(modelBuilder);
         //}
         public DbSet<ExcelResponse> ExcelResponses { get; set; }
+        public DbSet<UploadedExcelDetail> UploadedExcelDetails { get; set; }
 	}
 }

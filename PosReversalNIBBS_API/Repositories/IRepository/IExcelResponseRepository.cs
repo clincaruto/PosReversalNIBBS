@@ -11,6 +11,6 @@ namespace PosReversalNIBBS_API.Repositories.IRepository
         Task<ExcelResponse> UpdateAsync(Guid id, ExcelResponse excelResponse);
         Task<ExcelResponse> DeleteAsync(Guid id);
         Task<ExcelResponse?> CheckDuplicate(AddExcelResponseVM addExcelResponseVM);
-        Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelResponse);
+        Task<ExcelResponse> AddExcelAsync(AddExcelResponseVM excelRespons);
     }
 }

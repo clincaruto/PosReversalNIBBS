@@ -5,7 +5,7 @@
 namespace PosReversalNIBBS_API.Migrations
 {
     /// <inheritdoc />
-    public partial class testenvironment : Migration
+    public partial class addmoretablesintestenvironment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
