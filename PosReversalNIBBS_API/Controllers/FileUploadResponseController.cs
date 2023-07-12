@@ -16,7 +16,7 @@ namespace PosReversalNIBBS_API.Controllers
         private readonly IUploadedExcelDetailsRepository uploadedExcelDetailsRepository;
         private readonly IMapper mapper;
 
-        public FileUploadResponseController(IUploadedExcelDetailsRepository uploadedExcelDetailsRepository, IMapper mapper)
+        public FileUploadResponseController(IUploadedExcelDetailsRepository uploadedExcelDetailsRepository,  IMapper mapper)
         {
             this.uploadedExcelDetailsRepository = uploadedExcelDetailsRepository;
             this.mapper = mapper;
@@ -54,9 +54,43 @@ namespace PosReversalNIBBS_API.Controllers
            
         }
 
+        //[HttpGet]
+        //[Route("{id:guid}")]
+        //public async Task<IActionResult> GetByIdUpload(Guid id)
+        //{
+        //    string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+        //    if (!string.IsNullOrEmpty(authorizationHeader))
+        //    {
+        //        string token = authorizationHeader.Replace("Bearer ", "");
+        //        bool checker = JWTDecryption.JWTChecker(token);
+
+        //        var upload = await uploadedExcelDetailsRepository.GetByIdAsync(id);
+
+        //        if (upload == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        // Map Domain model to DTO
+        //        var uploadDTO = mapper.Map<FileUploadDto>(upload);
+
+        //        return Ok(uploadDTO);
+        //    }
+        //    else
+        //    {
+
+        //        // Authorization header is not present
+        //        return BadRequest("Authorization header is missing.");
+        //    }
+
+        //}
+
+
         [HttpGet]
+       // [Route("getbyIdbatch")]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetByIdUpload(Guid id)
+
+        public async Task<IActionResult> GetByIdBatchExcel (Guid id)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"];
             if (!string.IsNullOrEmpty(authorizationHeader))
@@ -64,21 +98,19 @@ namespace PosReversalNIBBS_API.Controllers
                 string token = authorizationHeader.Replace("Bearer ", "");
                 bool checker = JWTDecryption.JWTChecker(token);
 
-                var upload = await uploadedExcelDetailsRepository.GetByIdAsync(id);
-
+                var upload = await uploadedExcelDetailsRepository.GetAllUploadbyBatch(id);
                 if (upload == null)
                 {
                     return NotFound();
                 }
 
                 // Map Domain model to DTO
-                var uploadDTO = mapper.Map<FileUploadDto>(upload);
-
+                var uploadDTO = mapper.Map<FileExcelResponseDto>(upload);
                 return Ok(uploadDTO);
+
             }
             else
             {
-
                 // Authorization header is not present
                 return BadRequest("Authorization header is missing.");
             }

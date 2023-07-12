@@ -25,10 +25,21 @@ namespace PosReversalNIBBS_API.Repositories.Repository
             return await dbContext.UploadedExcelDetails.ToListAsync();
         }
 
+        public async Task<IEnumerable<ExcelResponse>> GetAllUploadbyBatch(Guid id)
+        {
+            return await dbContext.ExcelResponses.Where(x => x.UploadedExcelDetailBatchId == id).ToListAsync();
+        }
+
         public async Task<UploadedExcelDetail> GetByIdAsync(Guid batchId)
         {
             return await dbContext.UploadedExcelDetails.FirstAsync(x => x.BatchId == batchId);
         }
+
+        public async Task<ExcelResponse> GetByIdBatchExcelResponse(Guid batchId)
+        {
+            return await dbContext.ExcelResponses.FirstOrDefaultAsync(x => x.UploadedExcelDetailBatchId == batchId);
+        }
+
         public async Task<UploadedExcelDetail> UpdateAsync(Guid id, UploadedExcelDetail uploadedExcelDetail)
         {
             var existingUpload = await GetByIdAsync(id);
