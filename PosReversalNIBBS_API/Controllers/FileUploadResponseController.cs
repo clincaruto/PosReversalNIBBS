@@ -105,7 +105,7 @@ namespace PosReversalNIBBS_API.Controllers
                 }
 
                 // Map Domain model to DTO
-                var uploadDTO = mapper.Map<FileExcelResponseDto>(upload);
+                var uploadDTO = mapper.Map<List<FileExcelResponseDto>>(upload);
                 return Ok(uploadDTO);
 
             }
