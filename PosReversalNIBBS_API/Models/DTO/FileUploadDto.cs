@@ -18,6 +18,6 @@ namespace PosReversalNIBBS_API.Models.DTO
         public DateTime DateUploaded { get; set; }
         public double TotalTransaction { get; set; }
         public double TotalAmount { get; set; }
-        public string? Status { get; set; }
+        public string Status { get; set; }
     }
 }

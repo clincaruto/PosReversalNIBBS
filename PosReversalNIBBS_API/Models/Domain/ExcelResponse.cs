@@ -1,4 +1,6 @@
-﻿namespace PosReversalNIBBS_API.Models.Domain
+﻿using PosReversalNIBBS_API.Models.Enums;
+
+namespace PosReversalNIBBS_API.Models.Domain
 {
     public class ExcelResponse
     {
@@ -14,7 +16,7 @@
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
         public string? ACCOUNT_ID { get; set; }
-        public string? Reversal { get; set; }
+        public StatusEnum LOG_DRP { get; set; }
 
         public Guid? UploadedExcelDetailBatchId { get; set; }
 

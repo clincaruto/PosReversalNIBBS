@@ -1,8 +1,14 @@
-﻿using PosReversalNIBBS_API.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using POSReversalNIBBSBackground.Domain.Enums;
 
-namespace PosReversalNIBBS_API.Models.Domain
+namespace POSReversalNIBBSBackground.Domain
 {
     public class UploadedExcelDetail
     {
@@ -21,8 +27,5 @@ namespace PosReversalNIBBS_API.Models.Domain
         public double? TotalAmount { get; set; }
 
         public StatusEnum Status { get; set; }
-
-
-
     }
 }

@@ -16,7 +16,7 @@ namespace PosReversalNIBBS_API.Models.DTO
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
         public string ACCOUNT_ID { get; set; }
-        public string? Reversal { get; set; }
+        public string? LOG_DRP { get; set; }
 
         public Guid? UploadedExcelDetailBatchId { get; set; }
 

@@ -1,9 +1,12 @@
-﻿namespace POSReversalNIBBSBackground.Domain
+﻿using POSReversalNIBBSBackground.Domain.Enums;
+
+namespace POSReversalNIBBSBackground.Domain
 {
     public class ExcelResponse
     {
-		public Guid Id { get; set; }
-		public string TERMINAL_ID { get; set; }
+
+        public Guid Id { get; set; }
+        public string TERMINAL_ID { get; set; }
         public string MERCHANT_ID { get; set; }
 
         public double AMOUNT { get; set; }
@@ -14,5 +17,11 @@
         public string PROCESSOR { get; set; }
         public string BANK { get; set; }
         public string? ACCOUNT_ID { get; set; }
+        public StatusEnum LOG_DRP { get; set; }
+
+        public Guid? UploadedExcelDetailBatchId { get; set; }
+
+        // Navigation properties
+        public UploadedExcelDetail uploadedExcelDetail { get; set; }
     }
 }

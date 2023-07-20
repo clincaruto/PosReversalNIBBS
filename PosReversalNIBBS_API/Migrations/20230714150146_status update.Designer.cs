@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PosReversalNIBBS_API.Data;
 
@@ -11,9 +12,11 @@ using PosReversalNIBBS_API.Data;
 namespace PosReversalNIBBS_API.Migrations
 {
     [DbContext(typeof(PosNibbsDbContext))]
-    partial class PosNibbsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230714150146_status update")]
+    partial class statusupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,9 +41,6 @@ namespace PosReversalNIBBS_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LOG_DRP")
-                        .HasColumnType("int");
-
                     b.Property<string>("MERCHANT_ID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -55,6 +55,9 @@ namespace PosReversalNIBBS_API.Migrations
 
                     b.Property<string>("RRN")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reversal")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("STAN")
