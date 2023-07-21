@@ -78,12 +78,14 @@ namespace POSReversalNIBBSBackground.Services
                     "right(pan,4) in (@panRight) and " +
                     "terminal_id in (@terminalId) " +
                     "and retrieval_reference_nr in (@RRN) " +
+                   // "and tran_amount_req in (@AMOUNT) " +
                     "and system_trace_audit_nr in (@STAN);";
 
                     sqlQuery=sqlQuery.Replace("@panLeft", $"'{ item.PAN.Substring(0, 6)}'");    
                     sqlQuery=sqlQuery.Replace("@panRight", $"'{ item.PAN.Substring(12, 4)}'");   
                     sqlQuery=sqlQuery.Replace("@terminalId", $"'{ item.TERMINAL_ID}'");   
-                    sqlQuery=sqlQuery.Replace("@RRN", $"'{ item.RRN}'");   
+                    sqlQuery=sqlQuery.Replace("@RRN", $"'{ item.RRN}'");
+                  //  sqlQuery=sqlQuery.Replace("@AMOUNT", $"'{item.AMOUNT}'");
                     sqlQuery=sqlQuery.Replace("@STAN", $"'{ item.STAN}'");   
                     sqlQuery=sqlQuery.Replace("@downDate", $"'{UpDownDate(item.TRANSACTION_DATE, false)}'");   
                     sqlQuery=sqlQuery.Replace("@upDate", $"'{UpDownDate(item.TRANSACTION_DATE, true)}'");   
