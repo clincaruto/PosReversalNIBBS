@@ -18,6 +18,8 @@ namespace PosReversalNIBBS_API.Models.Domain
         public string? ACCOUNT_ID { get; set; }
         public StatusEnum LOG_DRP { get; set; }
 
+        public bool IsReversed { get; set; }
+
         public Guid? UploadedExcelDetailBatchId { get; set; }
 
         // Navigation properties

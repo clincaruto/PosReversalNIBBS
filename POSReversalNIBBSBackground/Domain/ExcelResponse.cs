@@ -19,6 +19,8 @@ namespace POSReversalNIBBSBackground.Domain
         public string? ACCOUNT_ID { get; set; }
         public StatusEnum LOG_DRP { get; set; }
 
+        public string? IsReversed { get; set; }
+
         public Guid? UploadedExcelDetailBatchId { get; set; }
 
         // Navigation properties

@@ -21,6 +21,11 @@ namespace POSReversalNIBBSBackground
                 if(allTransaction.Count()>0)
                     dbHelper.UpdateAllTheRecords(allTransaction);
 
+                DbReversal dbReversal= new DbReversal();
+                var allReversal = dbHelper.GetAll();
+                if(allReversal.Count()>0)
+                    dbReversal.UpdateAllTheRecords(allReversal);
+
                 await Task.Delay(10000, stoppingToken);
             }
         }
