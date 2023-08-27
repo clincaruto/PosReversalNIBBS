@@ -5,6 +5,7 @@
         Pending,
         Processed,
         SentToDRP,
+        //FailToDRP,
 
     }
 }

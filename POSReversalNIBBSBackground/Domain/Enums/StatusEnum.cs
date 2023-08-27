@@ -11,5 +11,6 @@ namespace POSReversalNIBBSBackground.Domain.Enums
         Pending,
         Processed,
         SentToDRP,
-    }
+		//FailToDRP,
+	}
 }

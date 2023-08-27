@@ -71,24 +71,25 @@ namespace POSReversalNIBBSBackground.Services
                     "from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
                     "where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
                     "and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
-                   // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
-                   "datetime_req between @downDate and @upDate " +
-                    " and tran_postilion_originated ='1'" +
-                    " and left(pan,6) in (@panLeft) and " +
+				  // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
+				  // "datetime_req between @downDate and @upDate " +
+				  //  " and tran_postilion_originated ='1'" +
+				    "tran_postilion_originated ='1'" +
+					" and left(pan,6) in (@panLeft) and " +
                     "right(pan,4) in (@panRight) and " +
                     "terminal_id in (@terminalId) " +
                     "and retrieval_reference_nr in (@RRN) " +
-                   // "and tran_amount_req in (@AMOUNT) " +
+                    "and tran_amount_req in (@AMOUNT) " +
                     "and system_trace_audit_nr in (@STAN);";
 
                     sqlQuery=sqlQuery.Replace("@panLeft", $"'{ item.PAN.Substring(0, 6)}'");    
                     sqlQuery=sqlQuery.Replace("@panRight", $"'{ item.PAN.Substring(12, 4)}'");   
                     sqlQuery=sqlQuery.Replace("@terminalId", $"'{ item.TERMINAL_ID}'");   
                     sqlQuery=sqlQuery.Replace("@RRN", $"'{ item.RRN}'");
-                  //  sqlQuery=sqlQuery.Replace("@AMOUNT", $"'{item.AMOUNT}'");
+                    sqlQuery=sqlQuery.Replace("@AMOUNT", $"'{item.AMOUNT}'");
                     sqlQuery=sqlQuery.Replace("@STAN", $"'{ item.STAN}'");   
-                    sqlQuery=sqlQuery.Replace("@downDate", $"'{UpDownDate(item.TRANSACTION_DATE, false)}'");   
-                    sqlQuery=sqlQuery.Replace("@upDate", $"'{UpDownDate(item.TRANSACTION_DATE, true)}'");   
+                   // sqlQuery=sqlQuery.Replace("@downDate", $"'{UpDownDate(item.TRANSACTION_DATE, false)}'");   
+                   // sqlQuery=sqlQuery.Replace("@upDate", $"'{UpDownDate(item.TRANSACTION_DATE, true)}'");   
                    
 
 
