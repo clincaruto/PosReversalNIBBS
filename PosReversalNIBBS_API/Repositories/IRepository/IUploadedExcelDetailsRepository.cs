@@ -8,6 +8,7 @@ namespace PosReversalNIBBS_API.Repositories.IRepository
         Task<UploadedExcelDetail> UpdateAsync(Guid id, UploadedExcelDetail uploadedExcelDetail);
         Task<UploadedExcelDetail> GetByIdAsync(Guid batchId);
         Task<IEnumerable<UploadedExcelDetail>> GetAllUploadAsync();
+        Task<UploadedExcelDetail> DeleteAsync(Guid id);
         Task<ExcelResponse> GetByIdBatchExcelResponse (Guid batchId);
 
         Task<IEnumerable<ExcelResponse>> GetAllUploadbyBatch(Guid id);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PosReversalNIBBS_API.Data;
 
@@ -11,9 +12,11 @@ using PosReversalNIBBS_API.Data;
 namespace PosReversalNIBBS_API.Migrations
 {
     [DbContext(typeof(PosNibbsDbContext))]
-    partial class PosNibbsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230828153500_add nul for trans date")]
+    partial class addnulfortransdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,18 +79,6 @@ namespace PosReversalNIBBS_API.Migrations
                         .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("clientRequestId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("logType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("serviceType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UploadedExcelDetailBatchId");
@@ -121,49 +112,6 @@ namespace PosReversalNIBBS_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("finnacleDbs");
-                });
-
-            modelBuilder.Entity("PosReversalNIBBS_API.Models.Domain.PostilionDB", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ACCOUNT")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("card_acceptor_id_code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("datetime_req")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("pan")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("retrieval_reference_nr")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("system_trace_audit_nr")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("terminal_id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("transaction_amount")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("postilionDBs");
                 });
 
             modelBuilder.Entity("PosReversalNIBBS_API.Models.Domain.UploadedExcelDetail", b =>

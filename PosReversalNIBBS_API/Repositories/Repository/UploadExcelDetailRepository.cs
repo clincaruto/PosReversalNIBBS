@@ -20,6 +20,20 @@ namespace PosReversalNIBBS_API.Repositories.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<UploadedExcelDetail> DeleteAsync(Guid id)
+        {
+            var uploadExcel = await GetByIdAsync (id);
+
+            if (uploadExcel != null)
+            {
+                dbContext.UploadedExcelDetails.Remove(uploadExcel);
+                await dbContext.SaveChangesAsync();
+                return uploadExcel;
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<UploadedExcelDetail>> GetAllUploadAsync()
         {
             return await dbContext.UploadedExcelDetails.ToListAsync();

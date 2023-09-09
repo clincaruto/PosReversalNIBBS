@@ -117,5 +117,35 @@ namespace PosReversalNIBBS_API.Controllers
             
         }
 
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteFile(Guid id)
+        {
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"];
+            if (!string.IsNullOrEmpty(authorizationHeader))
+            {
+
+                string token = authorizationHeader.Replace("Bearer ", "");
+                bool checker = JWTDecryption.JWTChecker(token);
+
+                // check it exist
+                var fileDomain = await uploadedExcelDetailsRepository.DeleteAsync(id);
+
+                if (fileDomain == null)
+                {
+                    return NotFound();
+                }
+
+                var fileDTO = mapper.Map<FileUploadDto>(fileDomain);
+
+                return Ok(fileDTO);
+            }
+            else
+            {
+                return BadRequest("Authorization header is missing.");
+            }
+            
+        }
+
     }
 }

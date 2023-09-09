@@ -26,7 +26,8 @@ namespace POSReversalNIBBSBackground.Services
 
             return optionsBuilder.Options;
         }
-        public  List<ExcelResponse> GetAll() { 
+        public  List<ExcelResponse> GetAll() 
+        { 
             using(_dbContext= new PosNibbsDbContext(GetAllOptions()))
             {
                 try
@@ -39,6 +40,8 @@ namespace POSReversalNIBBSBackground.Services
                     throw new Exception("No Excel list"); 
 
                 }
+              //  return new List<ExcelResponse>();
+                
             }
 
         }
@@ -52,37 +55,47 @@ namespace POSReversalNIBBSBackground.Services
             return newDateString;
         }
         public void UpdateAllTheRecords( List<ExcelResponse> excelRecords) {
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true; 
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            string connectionString = "Server=172.25.1.247,1554; Initial Catalog=postilion_office;User ID=pos_auto_revsl;Password=Auto@1234$;Encrypt=True;TrustServerCertificate=True;";
-
+            //  string connectionString = "Server=172.25.1.247,1554; Initial Catalog=postilion_office;User ID=pos_auto_revsl;Password=Auto@1234$;Encrypt=True;TrustServerCertificate=True;";
+            //  string connectionString = "Server=localhost;Database=PosReversalNibbsDB;Trusted_Connection=True; multipleactiveresultsets=True; TrustServerCertificate=Yes";
+            string connectionString = "Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True";
             foreach (var item in excelRecords)
             {
                 try
                 {
                     SqlConnection conn = new SqlConnection(connectionString);
                 conn.Open();
-                string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
-                    " from_account_type ,(tran_amount_req/100) as transaction_amount, " +
-                    "(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
-                    "system_trace_audit_nr, tran_nr, " +
-                    "terminal_id, card_acceptor_name_loc, " +
-                    "tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
-                    "from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
-                    "where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
-                    "and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
-				  // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
-				  // "datetime_req between @downDate and @upDate " +
-				  //  " and tran_postilion_originated ='1'" +
-				    "tran_postilion_originated ='1'" +
-					" and left(pan,6) in (@panLeft) and " +
-                    "right(pan,4) in (@panRight) and " +
-                    "terminal_id in (@terminalId) " +
-                    "and retrieval_reference_nr in (@RRN) " +
-                    "and tran_amount_req in (@AMOUNT) " +
-                    "and system_trace_audit_nr in (@STAN);";
+     //           string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
+     //               " from_account_type ,(tran_amount_req/100) as transaction_amount, " +
+     //               "(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
+     //               "system_trace_audit_nr, tran_nr, " +
+     //               "terminal_id, card_acceptor_name_loc, " +
+     //               "tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
+     //               "from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
+     //               "where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
+     //               "and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
+				 // // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
+				 // // "datetime_req between @downDate and @upDate " +
+				 // //  " and tran_postilion_originated ='1'" +
+				 //   "tran_postilion_originated ='1'" +
+					//" and left(pan,6) in (@panLeft) and " +
+     //               "right(pan,4) in (@panRight) and " +
+     //               "terminal_id in (@terminalId) " +
+     //               "and retrieval_reference_nr in (@RRN) " +
+     //               "and tran_amount_req in (@AMOUNT) " +
+     //               "and system_trace_audit_nr in (@STAN);";
 
-                    sqlQuery=sqlQuery.Replace("@panLeft", $"'{ item.PAN.Substring(0, 6)}'");    
+                    string sqlQuery = $" select ACCOUNT, pan, card_acceptor_id_code, terminal_id, system_trace_audit_nr, retrieval_reference_nr, transaction_amount " +
+                        "from PosReversalNibbsDB.dbo.postilionDBs " +
+                        "where card_acceptor_id_code in (@merchantId) and terminal_id in (@terminalId) and system_trace_audit_nr in (@STAN) " +
+                        "and retrieval_reference_nr in (@RRN) and transaction_amount in (@AMOUNT) " +
+                        "and left(pan,6) in (@panLeft) and right(pan,4) in (@panRight);";
+
+                    // "where FORACID in (@ACCOUNT) and TRAN_AMT in (@AMOUNT);";
+
+                    sqlQuery = sqlQuery.Replace("@merchantId", $"'{item.MERCHANT_ID}'");
+                    sqlQuery = sqlQuery.Replace("@panLeft", $"'{ item.PAN.Substring(0, 6)}'");    
                     sqlQuery=sqlQuery.Replace("@panRight", $"'{ item.PAN.Substring(12, 4)}'");   
                     sqlQuery=sqlQuery.Replace("@terminalId", $"'{ item.TERMINAL_ID}'");   
                     sqlQuery=sqlQuery.Replace("@RRN", $"'{ item.RRN}'");

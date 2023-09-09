@@ -17,5 +17,7 @@ namespace PosReversalNIBBS_API.Data
         //}
         public DbSet<ExcelResponse> ExcelResponses { get; set; }
         public DbSet<UploadedExcelDetail> UploadedExcelDetails { get; set; }
+        public DbSet<FinnacleDb> finnacleDbs { get; set; }
+        public DbSet<PostilionDB> postilionDBs { get; set;}
 	}
 }
