@@ -88,14 +88,24 @@ namespace POSReversalNIBBSBackground.Services
                     var payload = new DrpPayload()
                     {
                         accountNumber=x.ACCOUNT_ID??"",
-                        clientRequestId="",
-                        logType="",
-                        serviceType= "POS",
-                        terminalId = x.TERMINAL_ID,
+                        clientRequestId= x.clientRequestId,
+                        logType=x.logType,
+                        serviceType= x.serviceType,
+                        terminalId = x.terminal_channel,
                         transactionAmount= x.AMOUNT.ToString(),
                         transactionDate=x.TRANSACTION_DATE,
                     };
-                using (var httpClient = new HttpClient())
+                    //var payload = new DrpPayload()
+                    //{
+                    //    accountNumber = x.ACCOUNT_ID ?? "",
+                    //    clientRequestId = "",
+                    //    logType = "",
+                    //    serviceType = "POS",
+                    //    terminalId = x.TERMINAL_ID,
+                    //    transactionAmount = x.AMOUNT.ToString(),
+                    //    transactionDate = x.TRANSACTION_DATE,
+                    //};
+                    using (var httpClient = new HttpClient())
                 {
                     var apiUrl = "http://10.100.12.38:8221/api/drp-channels/log-dispute";
                     httpClient.DefaultRequestHeaders.Add("DownStreamAuthorization", "Basic ZGlzcHV0ZUNoYW5uZWxzOmRpc3B1dGVjaGFubmVscw=="); // Replace with your actual access token or header value

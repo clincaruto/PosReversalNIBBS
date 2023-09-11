@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PosReversalNIBBS_API.Data;
 
@@ -11,9 +12,11 @@ using PosReversalNIBBS_API.Data;
 namespace PosReversalNIBBS_API.Migrations
 {
     [DbContext(typeof(PosNibbsDbContext))]
-    partial class PosNibbsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230909075234_added extra column of terminal channel")]
+    partial class addedextracolumnofterminalchannel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

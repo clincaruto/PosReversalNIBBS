@@ -30,5 +30,7 @@ namespace PosReversalNIBBS_API.Models.Domain
         public string logType { get; set; } = "Regular";
         public string serviceType { get; set; } = "POS";
 
+        public string terminal_channel { get; set; } = "WEB";
+
     }
 }
