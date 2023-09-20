@@ -16,22 +16,25 @@ namespace POSReversalNIBBSBackground
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                DbHelper dbHelper = new DbHelper();
-                var allTransaction = dbHelper.GetAll();
-                if (allTransaction.Count() > 0)
-                    dbHelper.UpdateAllTheRecords(allTransaction);
+                //DbHelper dbHelper = new DbHelper();
+                //var allTransaction = dbHelper.GetAll();
+                //if (allTransaction.Count() > 0)
+                //    dbHelper.UpdateAllTheRecords(allTransaction);
+                //Console.WriteLine("Accounts Successfully Updated");
 
-                DbReversal dbReversal = new DbReversal();
-                var allReversal = dbReversal.GetAll();
-                if (allReversal.Count() > 0)
-                    dbReversal.UpdateAllTheRecords(allReversal);
+                //DbReversal dbReversal = new DbReversal();
+                //var allReversal = dbReversal.GetAll();
+                //if (allReversal.Count() > 0)
+                //    dbReversal.UpdateAllTheRecords(allReversal);
+                //Console.WriteLine("Reversal Successfully Updated");
 
                 DRP dRP = new DRP();
                 var allSendDRP = dRP.GetAll();
                 if (allSendDRP.Count() > 0)
                     await dRP.SendToDRP();
+                Console.WriteLine("Logged Successfully Updated");
 
-                await Task.Delay(10000, stoppingToken); // Delay for 10 seconds
+                await Task.Delay(1000, stoppingToken); // Delay for 10 seconds
             }
 
             //while (true) // Run indefinitely

@@ -33,7 +33,8 @@ namespace POSReversalNIBBSBackground.Services
             {
                 try
                 {
-                    var _excel = _dbContext.ExcelResponses.Where(x => x.IsReversed == "NO" & x.LOG_DRP == Domain.Enums.StatusEnum.Pending).AsNoTracking().ToList();
+                    Guid targetGuid = Guid.Parse("AD3DDCD5-17B2-46FC-817E-A74808EA6FD9");
+                    var _excel = _dbContext.ExcelResponses.Where(x => x.IsReversed == "NO" && x.LOG_DRP == Domain.Enums.StatusEnum.Pending  ).AsNoTracking().ToList();
                     return _excel;
                 }
                 catch (Exception ex)
@@ -49,7 +50,18 @@ namespace POSReversalNIBBSBackground.Services
 
         public async Task<ExcelResponse?> GetbyIdSend(Guid id)
         {
-            return await _dbContext.ExcelResponses.FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
+                {
+                    var details = await _dbContext.ExcelResponses.FirstOrDefaultAsync(x => x.Id == id);
+                    return details;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
 
@@ -65,18 +77,55 @@ namespace POSReversalNIBBSBackground.Services
             }
         }
 
+
+        private void MarkRecordAsSentChat(Guid recordId)
+        {
+            try
+            {
+                using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
+                {
+                    var dbRecord = _dbContext.ExcelResponses.FirstOrDefault(r => r.Id == recordId);
+                    if (dbRecord != null)
+                    {
+                        dbRecord.LOG_DRP = StatusEnum.SentToDRP;
+                        _dbContext.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+
+
         public async Task UpdateRecordsAsSendAsync(ExcelResponse record)
         {
-            var recordUpdate = await GetbyIdSend(record.Id);
-            if (recordUpdate != null)
+            using(_dbContext = new PosNibbsDbContext(GetAllOptions()))
             {
-                //record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
-                // recordUpdate.Log_drp
-                recordUpdate.LOG_DRP = StatusEnum.SentToDRP;
-                _dbContext.Update(recordUpdate);
-                _dbContext.SaveChanges();
+                try
+                {
+                    var recordUpdate = await GetbyIdSend(record.Id);
+                    if (recordUpdate != null)
+                    {
+                        //record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
+                        // recordUpdate.Log_drp
+                        recordUpdate.LOG_DRP = StatusEnum.SentToDRP;
+                        _dbContext.Update(recordUpdate);
+                        _dbContext.SaveChanges();
 
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
+
+           
         }
 
         public async Task SendToDRP()
@@ -88,7 +137,7 @@ namespace POSReversalNIBBSBackground.Services
                     var payload = new DrpPayload()
                     {
                         accountNumber=x.ACCOUNT_ID??"",
-                        clientRequestId= x.clientRequestId,
+                        clientRequestId= x.Id.ToString(),
                         logType=x.logType,
                         serviceType= x.serviceType,
                         terminalId = x.terminal_channel,
@@ -126,23 +175,19 @@ namespace POSReversalNIBBSBackground.Services
                     // response.EnsureSuccessStatusCode();
                     if (response.IsSuccessStatusCode)
                     {
-                        // Handle success
-                      await UpdateRecordsAsSendAsync(x);
-                        Console.WriteLine("Report sent successfully");
-                        
+                            Console.WriteLine(response.StatusCode.ToString());
+                            // Handle success
+                            Console.WriteLine("Report sent successfully to DRP");
+                            //  Console.WriteLine(response.StatusCode.ToString());
+
+                            MarkRecordAsSentChat(x.Id);
+                     // await UpdateRecordsAsSendAsync(x);
+                            Console.WriteLine("Updated Logged Transaction in the DB");
 
 
-                        //var recordUpdate = await GetbyIdSend(x.Id);
-                        //if (recordUpdate != null)
-                        //{
-                        //    _dbContext.Update(recordUpdate);
-                        //    _dbContext.SaveChanges();
-                        //}
-
-                       
 
 
-                    }
+                        }
                     else
                     {
                         // Handle errors

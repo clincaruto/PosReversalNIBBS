@@ -27,7 +27,7 @@ namespace POSReversalNIBBSBackground.Domain
         public UploadedExcelDetail uploadedExcelDetail { get; set; }
 
         // from payload
-        public string clientRequestId { get; set; } = "987654";
+       // public string clientRequestId { get; set; } = "987654";
         public string logType { get; set; } = "Regular";
         public string serviceType { get; set; } = "POS";
         public string terminal_channel { get; set; } = "WEB";
