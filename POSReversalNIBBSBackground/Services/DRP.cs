@@ -15,11 +15,11 @@ namespace POSReversalNIBBSBackground.Services
 {
     public class DRP
     {
-        private PosNibbsDbContext _dbContext;
+        private PosNibbsLogDbContext _dbContext;
 
-        private DbContextOptions<PosNibbsDbContext> GetAllOptions()
+        private DbContextOptions<PosNibbsLogDbContext> GetAllOptions()
         {
-            DbContextOptionsBuilder<PosNibbsDbContext> optionsBuilder = new DbContextOptionsBuilder<PosNibbsDbContext>();
+            DbContextOptionsBuilder<PosNibbsLogDbContext> optionsBuilder = new DbContextOptionsBuilder<PosNibbsLogDbContext>();
 
             optionsBuilder.UseSqlServer(AppSettings.ConnectionString);
 
@@ -29,7 +29,7 @@ namespace POSReversalNIBBSBackground.Services
 
         public List<ExcelResponse> GetAll()
         {
-            using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
+            using (_dbContext = new PosNibbsLogDbContext(GetAllOptions()))
             {
                 try
                 {
@@ -52,7 +52,7 @@ namespace POSReversalNIBBSBackground.Services
         {
             try
             {
-                using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
+                using (_dbContext = new PosNibbsLogDbContext(GetAllOptions()))
                 {
                     var details = await _dbContext.ExcelResponses.FirstOrDefaultAsync(x => x.Id == id);
                     return details;
@@ -82,7 +82,7 @@ namespace POSReversalNIBBSBackground.Services
         {
             try
             {
-                using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
+                using (_dbContext = new PosNibbsLogDbContext(GetAllOptions()))
                 {
                     var dbRecord = _dbContext.ExcelResponses.FirstOrDefault(r => r.Id == recordId);
                     if (dbRecord != null)
@@ -103,7 +103,7 @@ namespace POSReversalNIBBSBackground.Services
 
         public async Task UpdateRecordsAsSendAsync(ExcelResponse record)
         {
-            using(_dbContext = new PosNibbsDbContext(GetAllOptions()))
+            using(_dbContext = new PosNibbsLogDbContext(GetAllOptions()))
             {
                 try
                 {
@@ -176,6 +176,8 @@ namespace POSReversalNIBBSBackground.Services
                     if (response.IsSuccessStatusCode)
                     {
                             Console.WriteLine(response.StatusCode.ToString());
+                            var successMessage =await response.Content.ReadAsStringAsync();
+                            Console.WriteLine($"API Success :{successMessage}");
                             // Handle success
                             Console.WriteLine("Report sent successfully to DRP");
                             //  Console.WriteLine(response.StatusCode.ToString());

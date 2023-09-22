@@ -16,17 +16,17 @@ namespace POSReversalNIBBSBackground
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                //DbHelper dbHelper = new DbHelper();
-                //var allTransaction = dbHelper.GetAll();
-                //if (allTransaction.Count() > 0)
-                //    dbHelper.UpdateAllTheRecords(allTransaction);
-                //Console.WriteLine("Accounts Successfully Updated");
+                DbHelper dbHelper = new DbHelper();
+                var allTransaction = dbHelper.GetAll();
+                if (allTransaction.Count() > 0)
+                    dbHelper.UpdateAllTheRecords(allTransaction);
+                Console.WriteLine("Accounts Successfully Updated");
 
-                //DbReversal dbReversal = new DbReversal();
-                //var allReversal = dbReversal.GetAll();
-                //if (allReversal.Count() > 0)
-                //    dbReversal.UpdateAllTheRecords(allReversal);
-                //Console.WriteLine("Reversal Successfully Updated");
+                DbReversal dbReversal = new DbReversal();
+                var allReversal = dbReversal.GetAll();
+                if (allReversal.Count() > 0)
+                    dbReversal.UpdateAllTheRecords(allReversal);
+                Console.WriteLine("Reversal Successfully Updated");
 
                 DRP dRP = new DRP();
                 var allSendDRP = dRP.GetAll();

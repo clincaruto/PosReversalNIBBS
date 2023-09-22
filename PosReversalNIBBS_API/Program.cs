@@ -50,7 +50,7 @@ namespace PosReversalNIBBS_API
             //services cors
             builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
             {
-                builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+                builder.WithOrigins("http://10.100.9.90:5016", "http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             }));
 
             builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
@@ -82,6 +82,9 @@ namespace PosReversalNIBBS_API
             app.UseHttpsRedirection();
 
             app.UseCors("corsapp");
+
+           // app.UseRouting();
+
             app.UseAuthorization();
 
 
