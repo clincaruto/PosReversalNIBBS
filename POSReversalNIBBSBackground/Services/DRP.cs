@@ -154,6 +154,7 @@ namespace POSReversalNIBBSBackground.Services
                     //    transactionAmount = x.AMOUNT.ToString(),
                     //    transactionDate = x.TRANSACTION_DATE,
                     //};
+                    Console.WriteLine($"Transaction to be Logged:{ payload}");
                     using (var httpClient = new HttpClient())
                 {
                     var apiUrl = "http://10.100.12.38:8221/api/drp-channels/log-dispute";
