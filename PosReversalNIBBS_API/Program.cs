@@ -50,7 +50,7 @@ namespace PosReversalNIBBS_API
             //services cors
             builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
             {
-                builder.WithOrigins("https://posmerchant.ubagroup.com:5017", "http://10.100.9.90:5016", "http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+                builder.WithOrigins("http://10.100.72.111:9115", "https://posmerchant.ubagroup.com:5017", "http://localhost:52584", "http://10.100.9.90:5016", "http://localhost:4200", "https://websettlement.ubagroup.com:8997").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             }));
 
             builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());

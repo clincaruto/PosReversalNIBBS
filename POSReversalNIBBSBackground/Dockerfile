@@ -20,4 +20,4 @@ WORKDIR /app
 # Copy the published output from the build stage
 COPY --from=build /app/out .
 # Start the application
-ENTRYPOINT ["dotnet", "PosReversalNIBBS_API.dll"]
+ENTRYPOINT ["dotnet", "POSReversalNIBBSBackground.dll"]

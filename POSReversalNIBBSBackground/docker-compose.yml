@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  webapi:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: posreversalnibbs-background
+    ports:
+      - "8086:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__PosNibbsConnection=Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True
+     
+     
