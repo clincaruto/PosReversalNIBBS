@@ -59,38 +59,41 @@ namespace POSReversalNIBBSBackground.Services
 
             //  string connectionString = "Server=172.25.1.247,1554; Initial Catalog=postilion_office;User ID=pos_auto_revsl;Password=Auto@1234$;Encrypt=True;TrustServerCertificate=True;";
             //  string connectionString = "Server=localhost;Database=PosReversalNibbsDB;Trusted_Connection=True; multipleactiveresultsets=True; TrustServerCertificate=Yes";
-            string connectionString = "Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True";
+           // string connectionString = "Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True";
+            string connectionString = "Server=172.25.1.247,1554; Initial Catalog=postilion_office;User ID=posreversaluserpo;Password=Posreversal#userpo10;Encrypt=True;TrustServerCertificate=True;";
+
             foreach (var item in excelRecords)
             {
                 try
                 {
                     SqlConnection conn = new SqlConnection(connectionString);
                 conn.Open();
-     //           string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
-     //               " from_account_type ,(tran_amount_req/100) as transaction_amount, " +
-     //               "(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
-     //               "system_trace_audit_nr, tran_nr, " +
-     //               "terminal_id, card_acceptor_name_loc, " +
-     //               "tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
-     //               "from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
-     //               "where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
-     //               "and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
-				 // // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
-				 // // "datetime_req between @downDate and @upDate " +
-				 // //  " and tran_postilion_originated ='1'" +
-				 //   "tran_postilion_originated ='1'" +
-					//" and left(pan,6) in (@panLeft) and " +
-     //               "right(pan,4) in (@panRight) and " +
-     //               "terminal_id in (@terminalId) " +
-     //               "and retrieval_reference_nr in (@RRN) " +
-     //               "and tran_amount_req in (@AMOUNT) " +
-     //               "and system_trace_audit_nr in (@STAN);";
+                    Console.WriteLine("Post-office db connected");
+                    string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
+                        " from_account_type ,(tran_amount_req/100) as transaction_amount, " +
+                        "(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
+                        "system_trace_audit_nr, tran_nr, " +
+                        "terminal_id, card_acceptor_name_loc, " +
+                        "tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
+                        "from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
+                        "where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
+                        "and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
+            // "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
+            // "datetime_req between @downDate and @upDate " +
+            //  " and tran_postilion_originated ='1'" +
+                        "tran_postilion_originated ='1'" +
+                        " and left(pan,6) in (@panLeft) and " +
+                        "right(pan,4) in (@panRight) and " +
+                        "terminal_id in (@terminalId) " +
+                        "and retrieval_reference_nr in (@RRN) " +
+                        "and tran_amount_req/100 in (@AMOUNT) " +
+                        "and system_trace_audit_nr in (@STAN);";
 
-                    string sqlQuery = $" select ACCOUNT, pan, card_acceptor_id_code, terminal_id, system_trace_audit_nr, retrieval_reference_nr, transaction_amount " +
-                        "from PosReversalNibbsDB.dbo.postilionDBs " +
-                        "where card_acceptor_id_code in (@merchantId) and terminal_id in (@terminalId) and system_trace_audit_nr in (@STAN) " +
-                        "and retrieval_reference_nr in (@RRN) and transaction_amount in (@AMOUNT) " +
-                        "and left(pan,6) in (@panLeft) and right(pan,4) in (@panRight);";
+                    //string sqlQuery = $" select ACCOUNT, pan, card_acceptor_id_code, terminal_id, system_trace_audit_nr, retrieval_reference_nr, transaction_amount " +
+                    //    "from PosReversalNibbsDB.dbo.postilionDBs " +
+                    //    "where card_acceptor_id_code in (@merchantId) and terminal_id in (@terminalId) and system_trace_audit_nr in (@STAN) " +
+                    //    "and retrieval_reference_nr in (@RRN) and transaction_amount in (@AMOUNT) " +
+                    //    "and left(pan,6) in (@panLeft) and right(pan,4) in (@panRight);";
 
                     // "where FORACID in (@ACCOUNT) and TRAN_AMT in (@AMOUNT);";
 
@@ -103,8 +106,9 @@ namespace POSReversalNIBBSBackground.Services
                     sqlQuery=sqlQuery.Replace("@STAN", $"'{ item.STAN}'");   
                    // sqlQuery=sqlQuery.Replace("@downDate", $"'{UpDownDate(item.TRANSACTION_DATE, false)}'");   
                    // sqlQuery=sqlQuery.Replace("@upDate", $"'{UpDownDate(item.TRANSACTION_DATE, true)}'");   
-                   
 
+                   
+                  Console.WriteLine(sqlQuery);
 
                    SqlCommand command = new SqlCommand(sqlQuery, conn);
 
@@ -155,6 +159,8 @@ namespace POSReversalNIBBSBackground.Services
                                     record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
                                     _dbContext.Update(record);
                                     _dbContext.SaveChanges();
+
+                                    Console.WriteLine("Update account");
                                 }
                              
                             }

@@ -23,14 +23,16 @@ namespace PosReversalNIBBS_API.Controllers
 		private readonly IExcelResponseRepository excelResponseRepository;
         private readonly IUploadedExcelDetailsRepository uploadedExcelDetailsRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<ExcelResponseController> logger;
 
-
-		public ExcelResponseController(IExcelResponseRepository excelResponseRepository, IUploadedExcelDetailsRepository uploadedExcelDetailsRepository, IMapper mapper)
+        public ExcelResponseController(IExcelResponseRepository excelResponseRepository, IUploadedExcelDetailsRepository uploadedExcelDetailsRepository,
+            IMapper mapper, ILogger<ExcelResponseController> logger)
 		{
 			this.excelResponseRepository = excelResponseRepository;
             this.uploadedExcelDetailsRepository = uploadedExcelDetailsRepository;
             this.mapper = mapper;
-		}
+            this.logger = logger;
+        }
 
 		[HttpGet]
 		public async Task <IActionResult> GetAllExcelAsync()

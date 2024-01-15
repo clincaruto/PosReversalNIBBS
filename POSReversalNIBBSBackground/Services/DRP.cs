@@ -156,8 +156,10 @@ namespace POSReversalNIBBSBackground.Services
                     //};
                     Console.WriteLine($"Transaction to be Logged:{ payload}");
                     using (var httpClient = new HttpClient())
-                {
-                    var apiUrl = "http://10.100.12.38:8221/api/drp-channels/log-dispute";
+
+                {     ///// test drp api
+                   // var apiUrl = "http://10.100.12.38:8221/api/drp-channels/log-dispute";
+                    var apiUrl = "http://drpdecent.ubagroup.com:8555/api/drp-channels/log-dispute"; 
                     httpClient.DefaultRequestHeaders.Add("DownStreamAuthorization", "Basic ZGlzcHV0ZUNoYW5uZWxzOmRpc3B1dGVjaGFubmVscw=="); // Replace with your actual access token or header value
                     httpClient.DefaultRequestHeaders.Add("Channels", "voiceBot");
                     // Serialize the records to JSON

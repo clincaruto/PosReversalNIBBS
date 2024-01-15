@@ -11,6 +11,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__PosNibbsConnection=Server=10.100.0.120;Database=PosReversalNibbsDB;user id=posreversaluserms; password=Posreversaluserms1;Encrypt=True;TrustServerCertificate=True
+      - ConnectionStrings__PosNibbsConnection=Server=10.100.9.120,1433;Database=PosReversalNibbsDB;user id=posreversaluserms; password=Posreversaluserms1;Encrypt=True;TrustServerCertificate=True
      
      

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using POSReversalNIBBSBackground.Data;
 using POSReversalNIBBSBackground.Domain;
 using POSReversalNIBBSBackground.Models;
@@ -85,37 +86,40 @@ namespace POSReversalNIBBSBackground.Services
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
            // string connectionString = "Server=localhost;Database=PosReversalNibbsDB;Trusted_Connection=True; multipleactiveresultsets=True; TrustServerCertificate=Yes";
-            string connectionString = "Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True";
+          //  string connectionString = "Server=10.100.13.159;Database=PosReversalNibbsDB;user id=PosReversaluser; password=Manager@123$;Encrypt=True;TrustServerCertificate=True";
+            string connectionString = "DATA SOURCE=(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)(HOST = 10.100.20.12)(PORT = 1540))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = UBANG))) ;PASSWORD=POSREVERSALUSERFI#1a; USER ID=posreversaluserfi;Min Pool Size=10;Connection Lifetime=120;Connection Timeout=800; Incr Pool Size=5;Decr Pool Size=2\" providerName=\"Oracle.DataAccess.Client\"";
             foreach (var item in excelRecords)
             {
                 try
                 {
-                    SqlConnection conn = new SqlConnection(connectionString);
+                   // SqlConnection conn = new SqlConnection(connectionString);
+                    OracleConnection conn = new OracleConnection(connectionString);
                     conn.Open();
-                    //string sqlQuery = $"select FORACID , D.* , g.foracid from tbaadm.htd d, tbaadm.gam g  where g.acid = d.acid  and  foracid in (@ACCOUNT) " +
-                    //    "and tran_amt in (@AMOUNT);";
-                    string sqlQuery = $"select ID, FORACID, TRAN_DATE, PART_TRAN_TYPE, TRAN_AMT FROM PosReversalNibbsDB.dbo.finnacleDbs " +
-                        "where FORACID in (@ACCOUNT) and TRAN_AMT in (@AMOUNT);";
+                    Console.WriteLine("finnacle db connected");
+                    string sqlQuery = $"select FORACID , D.* , g.foracid from tbaadm.htd d, tbaadm.gam g  where g.acid = d.acid  and  foracid in (@ACCOUNT) " +
+                        "and tran_amt in (@AMOUNT);";
+                    //string sqlQuery = $"select ID, FORACID, TRAN_DATE, PART_TRAN_TYPE, TRAN_AMT FROM PosReversalNibbsDB.dbo.finnacleDbs " +
+                    //    "where FORACID in (@ACCOUNT) and TRAN_AMT in (@AMOUNT);";
 
-                   // string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
-                   //" from_account_type ,(tran_amount_req/100) as transaction_amount, " +
-                   //"(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
-                   //"system_trace_audit_nr, tran_nr, " +
-                   //"terminal_id, card_acceptor_name_loc, " +
-                   //"tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
-                   //"from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
-                   //"where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
-                   //"and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
-                   //// "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
-                   //// "datetime_req between @downDate and @upDate " +
-                   ////  " and tran_postilion_originated ='1'" +
-                   //"tran_postilion_originated ='1'" +
-                   //" and left(pan,6) in (@panLeft) and " +
-                   //"right(pan,4) in (@panRight) and " +
-                   //"terminal_id in (@terminalId) " +
-                   //"and retrieval_reference_nr in (@RRN) " +
-                   //"and tran_amount_req in (@AMOUNT) " +
-                   //"and system_trace_audit_nr in (@STAN);";
+                    // string sqlQuery = $"select payee, structured_data_req, structured_data_rsp,datetime_req,message_type,pan,from_account_id as ACCOUNT, " +
+                    //" from_account_type ,(tran_amount_req/100) as transaction_amount, " +
+                    //"(settle_amount_req/100) settlement_amount,tran_currency_code,settle_currency_code,(retrieval_reference_nr), " +
+                    //"system_trace_audit_nr, tran_nr, " +
+                    //"terminal_id, card_acceptor_name_loc, " +
+                    //"tran_type,pos_terminal_type,source_node_name, sink_node_name, rsp_code_rsp,c.response_code_description, card_acceptor_id_code " +
+                    //"from post_tran a (nolock), post_tran_cust b (nolock), Def_Transaction_Response_Codes c " +
+                    //"where a.post_tran_cust_id = b.post_tran_cust_id and a.rsp_code_rsp = c.response_code " +
+                    //"and source_node_name not in ('ActiveSrc', 'KIMONOsrc') and " +
+                    //// "datetime_req between '2023-03-01 00:00:00.000' and '2023-03-04 23:59:59.999' " +
+                    //// "datetime_req between @downDate and @upDate " +
+                    ////  " and tran_postilion_originated ='1'" +
+                    //"tran_postilion_originated ='1'" +
+                    //" and left(pan,6) in (@panLeft) and " +
+                    //"right(pan,4) in (@panRight) and " +
+                    //"terminal_id in (@terminalId) " +
+                    //"and retrieval_reference_nr in (@RRN) " +
+                    //"and tran_amount_req in (@AMOUNT) " +
+                    //"and system_trace_audit_nr in (@STAN);";
 
                     //sqlQuery = sqlQuery.Replace("@STAN", $"'{item.STAN}'");
                     sqlQuery = sqlQuery.Replace("@ACCOUNT", $"'{item.ACCOUNT_ID}'");
@@ -125,10 +129,14 @@ namespace POSReversalNIBBSBackground.Services
 
 
 
-                    SqlCommand command = new SqlCommand(sqlQuery, conn);
+                   // SqlCommand command = new SqlCommand(sqlQuery, conn);
 
                    
-                    SqlDataReader reader = command.ExecuteReader();
+                  //  SqlDataReader reader = command.ExecuteReader();
+
+                    OracleCommand command = new OracleCommand(sqlQuery, conn);
+
+                    OracleDataReader reader = command.ExecuteReader();
 
 
                     while (reader.Read())
@@ -146,6 +154,8 @@ namespace POSReversalNIBBSBackground.Services
                                     record.IsReversed = FormatIsReversed(reader["PART_TRAN_TYPE"].ToString());
                                     _dbContext.Update(record);
                                     _dbContext.SaveChanges();
+
+                                    Console.WriteLine("Reversal in DB");
                                 }
                                
 

@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using PosReversalNIBBS_API.Data;
 using PosReversalNIBBS_API.Repositories.IRepository;
 using PosReversalNIBBS_API.Repositories.Repository;
+using Serilog;
 
 namespace PosReversalNIBBS_API
 {
@@ -15,6 +16,15 @@ namespace PosReversalNIBBS_API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .MinimumLevel.Information()
+                .CreateLogger();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
+
 
             builder.Services.AddControllers();
             builder.Services.AddHttpContextAccessor();
