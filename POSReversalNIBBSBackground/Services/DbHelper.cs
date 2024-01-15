@@ -151,23 +151,53 @@ namespace POSReversalNIBBSBackground.Services
                      
                         using (_dbContext = new PosNibbsDbContext(GetAllOptions()))
                         {
+                            //try
+                            //{
+                            //    var record = _dbContext.ExcelResponses.FirstOrDefault(x=>x.Id==item.Id);
+                            //    if (record!=null)
+                            //    {
+                            //        record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
+                            //        _dbContext.Update(record);
+                            //        _dbContext.SaveChanges();
+
+                            //        Console.WriteLine("Update account");
+                            //    }
+
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    throw new Exception("No Excel list");
+
+                            //}
+
+
                             try
                             {
-                                var record = _dbContext.ExcelResponses.FirstOrDefault(x=>x.Id==item.Id);
-                                if (record!=null)
+                                var record = _dbContext.ExcelResponses.FirstOrDefault(x => x.Id == item.Id);
+                                if (record != null)
                                 {
-                                    record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
+                                    if (reader.HasRows)
+                                    {
+                                        // Rows are present in the result set, update the record with the account ID
+                                        record.ACCOUNT_ID = reader["ACCOUNT"].ToString();
+                                    }
+                                    else
+                                    {
+                                        // No rows in the result set, update the record as NOT AVAILABLE
+                                        record.ACCOUNT_ID = "NOT AVAILABLE";
+                                        record.IsReversed = "NOT AVAILABLE";
+                                        Console.WriteLine($"Account is not available for record with ID: {record.Id}");
+                                       
+                                    }
+
                                     _dbContext.Update(record);
                                     _dbContext.SaveChanges();
-
                                     Console.WriteLine("Update account");
                                 }
-                             
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception("No Excel list");
-
+                                throw new Exception("Error updating Excel list", ex);
                             }
                         }
 

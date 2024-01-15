@@ -129,10 +129,12 @@ namespace POSReversalNIBBSBackground.Services
 
 
 
-                   // SqlCommand command = new SqlCommand(sqlQuery, conn);
+                    // SqlCommand command = new SqlCommand(sqlQuery, conn);
 
-                   
-                  //  SqlDataReader reader = command.ExecuteReader();
+
+                    //  SqlDataReader reader = command.ExecuteReader();
+
+                    Console.WriteLine(sqlQuery);
 
                     OracleCommand command = new OracleCommand(sqlQuery, conn);
 
